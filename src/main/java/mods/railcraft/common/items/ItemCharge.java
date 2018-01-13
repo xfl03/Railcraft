@@ -10,7 +10,7 @@
 
 package mods.railcraft.common.items;
 
-import mods.railcraft.api.core.IRailcraftRecipeIngredient;
+import mods.railcraft.api.core.IRailcraftRecipeIngredientContainer;
 import mods.railcraft.api.core.IVariantEnum;
 import mods.railcraft.api.crafting.RailcraftCraftingManager;
 import mods.railcraft.common.plugins.forge.CraftingPlugin;
@@ -24,7 +24,7 @@ import static mods.railcraft.common.items.ItemCharge.EnumCharge.*;
  *
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public class ItemCharge extends ItemRailcraftSubtyped {
+public class ItemCharge extends ItemRailcraftSubtyped<ItemCharge.EnumCharge> {
 
     public ItemCharge() {
         super(EnumCharge.class);
@@ -113,7 +113,7 @@ public class ItemCharge extends ItemRailcraftSubtyped {
         }
 
         @Override
-        public Object getAlternate(IRailcraftRecipeIngredient container) {
+        public Object getAlternate(IRailcraftRecipeIngredientContainer container) {
             return alternate;
         }
 

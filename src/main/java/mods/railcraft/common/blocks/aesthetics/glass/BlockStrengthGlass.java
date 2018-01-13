@@ -9,9 +9,7 @@
  -----------------------------------------------------------------------------*/
 package mods.railcraft.common.blocks.aesthetics.glass;
 
-import mods.railcraft.api.core.IVariantEnum;
 import mods.railcraft.common.blocks.IRailcraftBlock;
-import mods.railcraft.common.blocks.RailcraftBlocks;
 import mods.railcraft.common.fluids.FluidTools;
 import mods.railcraft.common.fluids.Fluids;
 import mods.railcraft.common.plugins.color.ColorPlugin;
@@ -53,7 +51,7 @@ import java.util.*;
 /**
  * @author CovertJaguar <http://www.railcraft.info/>
  */
-public class BlockStrengthGlass extends BlockGlass implements IRailcraftBlock, ColorPlugin.IColoredBlock {
+public class BlockStrengthGlass extends BlockGlass implements IRailcraftBlock.WithVariant<EnumColor>, ColorPlugin.IColoredBlock {
 
     public static final PropertyEnum<EnumColor> COLOR = PropertyEnum.create("color", EnumColor.class);
     public static final PropertyEnum<Position> POSITION = PropertyEnum.create("position", Position.class);
@@ -70,6 +68,12 @@ public class BlockStrengthGlass extends BlockGlass implements IRailcraftBlock, C
     @Override
     public Block getObject() {
         return this;
+    }
+
+    @Override
+    public IBlockState getState(EnumColor variant) {
+        // don't need to check if color is enabled
+        return getDefaultState().withProperty(COLOR, variant);
     }
 
     @Override
@@ -113,31 +117,19 @@ public class BlockStrengthGlass extends BlockGlass implements IRailcraftBlock, C
                     "GGG",
                     "GDG",
                     "GGG",
-                    'G', RailcraftBlocks.GLASS.getWildcard(),
+                    'G', getWildcard(),
                     'D', color.getDyeOreDictTag());
         }
     }
 
-    @Nullable
     @Override
-    public Class<? extends IVariantEnum> getVariantEnum() {
+    public Class<EnumColor> getVariantEnum() {
         return EnumColor.class;
     }
 
-    @Nullable
     @Override
-    public IVariantEnum[] getVariants() {
+    public EnumColor[] getVariants() {
         return EnumColor.VALUES;
-    }
-
-    @Override
-    public IBlockState getState(@Nullable IVariantEnum variant) {
-        IBlockState state = getDefaultState();
-        if (variant != null) {
-            checkVariant(variant);
-            state = state.withProperty(COLOR, (EnumColor) variant);
-        }
-        return state;
     }
 
     public EnumColor getColor(IBlockState state) {

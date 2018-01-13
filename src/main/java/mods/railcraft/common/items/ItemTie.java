@@ -9,9 +9,8 @@
  -----------------------------------------------------------------------------*/
 package mods.railcraft.common.items;
 
-import mods.railcraft.api.core.IRailcraftRecipeIngredient;
+import mods.railcraft.api.core.IRailcraftRecipeIngredientContainer;
 import mods.railcraft.api.core.IVariantEnum;
-import mods.railcraft.common.fluids.FluidTools;
 import mods.railcraft.common.fluids.Fluids;
 import mods.railcraft.common.plugins.forge.CraftingPlugin;
 import mods.railcraft.common.plugins.forge.RailcraftRegistry;
@@ -68,7 +67,7 @@ public class ItemTie extends ItemRailcraftSubtyped {
         }
 
         @Override
-        public Object getAlternate(IRailcraftRecipeIngredient container) {
+        public Object getAlternate(IRailcraftRecipeIngredientContainer container) {
             return alternate;
         }
 

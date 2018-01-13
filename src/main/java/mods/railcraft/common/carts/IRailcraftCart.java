@@ -30,37 +30,64 @@ public interface IRailcraftCart {
 
     @Nullable
     default ItemStack createCartItem(EntityMinecart cart) {
-        ItemStack stack = RailcraftCarts.fromCart(cart).getStack();
-        if (!InvTools.isEmpty(stack) && cart.hasCustomName())
-            stack.setStackDisplayName(cart.getCustomNameTag());
-        return stack;
-    }
-
-    default ItemStack[] getComponents(EntityMinecart cart) {
-        ItemStack contents = getCartType().getContents();
-        if (!InvTools.isEmpty(contents))
-            return new ItemStack[]{new ItemStack(Items.MINECART), contents};
-        return new ItemStack[]{createCartItem(cart)};
-    }
-
-    default ItemStack[] getItemsDropped(EntityMinecart cart) {
-        if (RailcraftConfig.doCartsBreakOnDrop())
-            return getComponents(cart);
-        else
-            return new ItemStack[]{createCartItem(cart)};
+        return new ItemStack(Items.MINECART);
     }
 
     default void killAndDrop(EntityMinecart cart) {
         cart.setDead();
         if (!cart.worldObj.getGameRules().getBoolean("doEntityDrops"))
             return;
-        ItemStack[] drops = getItemsDropped(cart);
-        if (!RailcraftConfig.doCartsBreakOnDrop() && cart.hasCustomName() && !ArrayUtils.isEmpty(drops))
-            drops[0].setStackDisplayName(cart.getCustomNameTag());
-        for (ItemStack item : drops) {
-            if (!InvTools.isEmpty(item))
-                cart.entityDropItem(item, 0.0F);
+        ItemStack drop = createCartItem(cart);
+        if (InvTools.isEmpty(drop))
+            return;
+        if (!RailcraftConfig.doCartsBreakOnDrop() && cart.hasCustomName())
+            drop.setStackDisplayName(cart.getCustomNameTag());
+        cart.entityDropItem(drop, 0.0F);
+    }
+
+    interface WithItemForm extends IRailcraftCart {
+
+        @Override
+        IRailcraftCartContainer.WithItem<?> getCartType();
+
+        default void initEntityFromItem(ItemStack stack) {
         }
+
+        @Nullable
+        default ItemStack createCartItem(EntityMinecart cart) {
+            ItemStack stack = getCartType().getStack();
+            if (!InvTools.isEmpty(stack) && cart.hasCustomName())
+                stack.setStackDisplayName(cart.getCustomNameTag());
+            return stack;
+        }
+
+        default ItemStack[] getComponents(EntityMinecart cart) {
+            ItemStack contents = getCartType().getContents();
+            if (!InvTools.isEmpty(contents))
+                return new ItemStack[]{new ItemStack(Items.MINECART), contents};
+            return new ItemStack[]{createCartItem(cart)};
+        }
+
+        default ItemStack[] getItemsDropped(EntityMinecart cart) {
+            if (RailcraftConfig.doCartsBreakOnDrop())
+                return getComponents(cart);
+            else
+                return new ItemStack[]{createCartItem(cart)};
+        }
+
+        default void killAndDrop(EntityMinecart cart) {
+            cart.setDead();
+            if (!cart.worldObj.getGameRules().getBoolean("doEntityDrops"))
+                return;
+            ItemStack[] drops = getItemsDropped(cart);
+            if (!RailcraftConfig.doCartsBreakOnDrop() && cart.hasCustomName() && !ArrayUtils.isEmpty(drops))
+                drops[0].setStackDisplayName(cart.getCustomNameTag());
+            for (ItemStack item : drops) {
+                if (!InvTools.isEmpty(item))
+                    cart.entityDropItem(item, 0.0F);
+            }
+        }
+
     }
 
 }

@@ -9,14 +9,10 @@
  -----------------------------------------------------------------------------*/
 package mods.railcraft.common.core;
 
-import mods.railcraft.api.core.IVariantEnum;
 import mods.railcraft.api.signals.SignalTools;
-import mods.railcraft.common.blocks.RailcraftBlocks;
 import mods.railcraft.common.blocks.tracks.outfitted.TrackKits;
 import mods.railcraft.common.carts.EntityTunnelBore;
-import mods.railcraft.common.carts.RailcraftCarts;
 import mods.railcraft.common.fluids.FluidTools;
-import mods.railcraft.common.items.RailcraftItems;
 import mods.railcraft.common.items.enchantment.RailcraftEnchantments;
 import mods.railcraft.common.modules.ModuleChunkLoading;
 import mods.railcraft.common.modules.RailcraftModuleManager;
@@ -37,6 +33,7 @@ import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
+//TODO move config loading to different parts of object container definition
 public class RailcraftConfig {
     public static final ItemMap<Float> worldspikeFuelStandard = new ItemMap<>();
     public static final ItemMap<Float> worldspikeFuelPersonal = new ItemMap<>();
@@ -409,10 +406,10 @@ public class RailcraftConfig {
     private static void loadCarts() {
         configEntity.addCustomCategoryComment(CAT_ENTITIES, "Disable individual entities here.");
 
-        for (RailcraftCarts cart : RailcraftCarts.VALUES) {
-            if (!cart.isVanillaCart())
-                loadEntityProperty(cart.getBaseTag());
-        }
+//        for (RailcraftCarts cart : RailcraftCarts.VALUES) {
+//            if (!cart.isVanillaCart())
+//                loadEntityProperty(cart.getBaseTag());
+//        } TODO fix carts
     }
 
     private static void loadEntityProperty(String tag) {
@@ -436,15 +433,14 @@ public class RailcraftConfig {
         configBlocks.addCustomCategoryComment(CAT_SUB_BLOCKS, "Here is were you can enable/disable various sub-blocks.\n"
                 + "Railcraft will attempt to compensate for any missing component by providing alternatives (usually).");
 
-        for (RailcraftBlocks block : RailcraftBlocks.VALUES) {
-            loadBlockProperty(block.getBaseTag());
-            Class<? extends IVariantEnum> variantClass = block.getVariantClass();
-            if (variantClass != null)
-                for (IVariantEnum variant : variantClass.getEnumConstants()) {
+        RailcraftObjects.processBlockContainers(
+                block -> loadBlockProperty(block.getBaseTag()),
+                null,
+                (block, variant) -> {
                     String tag = block.getBaseTag() + RailcraftConstants.SEPERATOR + variant.getResourcePathSuffix();
                     loadBlockFeature(tag);
                 }
-        }
+        );
 
         loadBlockProperty("fluid.creosote");
         loadBlockProperty("fluid.steam");
@@ -559,9 +555,7 @@ public class RailcraftConfig {
                 + "This is not true for all items, so some experimentation may be needed.\n"
                 + "Some disabled items will cause a substitute to be used in crafting recipes.");
 
-        for (RailcraftItems item : RailcraftItems.VALUES) {
-            loadItemProperty(item.getBaseTag());
-        }
+        RailcraftObjects.processItemContainers(container -> loadItemProperty(container.getBaseTag()));
 
         Map<String, Property> items = configItems.getCategory(CAT_ITEMS);
         items.keySet().retainAll(enabledItems.keySet());
@@ -873,7 +867,7 @@ public class RailcraftConfig {
         return ArrayUtils.contains(enchantments, enchantment);
     }
 
-    public static boolean isItemEnabled(IRailcraftObjectContainer<?> itemContainer) {
+    public static boolean isItemEnabled(IRailcraftObjectContainer itemContainer) {
         String tag = itemContainer.getBaseTag();
         tag = MiscTools.cleanTag(tag);
         Boolean b = enabledItems.get(tag);
@@ -882,7 +876,7 @@ public class RailcraftConfig {
         return b;
     }
 
-    public static boolean isBlockEnabled(IRailcraftObjectContainer<?> block) {
+    public static boolean isBlockEnabled(IRailcraftObjectContainer block) {
         return isBlockEnabled(block.getBaseTag());
     }
 
@@ -907,7 +901,7 @@ public class RailcraftConfig {
         return b;
     }
 
-    public static boolean isCartEnabled(IRailcraftObjectContainer<?> cart) {
+    public static boolean isCartEnabled(IRailcraftObjectContainer cart) {
         String tag = cart.getBaseTag();
         tag = MiscTools.cleanTag(tag);
         Boolean enabled = entities.get(tag);

@@ -14,6 +14,7 @@ import mods.railcraft.api.core.IVariantEnum;
 import mods.railcraft.client.render.models.resource.ModelManager;
 import mods.railcraft.client.util.textures.TextureAtlasSheet;
 import mods.railcraft.common.core.IRailcraftObject;
+import mods.railcraft.common.core.RailcraftConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
@@ -34,14 +35,6 @@ import javax.annotation.Nullable;
  */
 public interface IRailcraftBlock extends IRailcraftObject<Block> {
 
-    default IBlockState getState(@Nullable IVariantEnum variant) {
-        return ((Block) this).getDefaultState();
-    }
-
-    default IBlockState getItemRenderState(@Nullable IVariantEnum variant) {
-        return getState(variant);
-    }
-
     @SideOnly(Side.CLIENT)
     @Nullable
     default StateMapperBase getStateMapper() {
@@ -57,31 +50,58 @@ public interface IRailcraftBlock extends IRailcraftObject<Block> {
     }
 
     @SideOnly(Side.CLIENT)
-    default void registerItemModel(ItemStack stack, @Nullable IVariantEnum variant) {
-        ModelManager.registerBlockItemModel(stack, getItemRenderState(variant));
-    }
-
-    @SideOnly(Side.CLIENT)
     default ResourceLocation getBlockTexture() {
-        return ((Block) this).getRegistryName();
+        return getRegistryName();
     }
 
     @SideOnly(Side.CLIENT)
     default void registerTextures(TextureMap textureMap) {
         TextureAtlasSheet.unstitchIcons(textureMap, getBlockTexture(), getTextureDimensions());
-        IVariantEnum[] variants = getVariants();
-        if (variants != null) {
-            for (IVariantEnum variant : variants) {
-                if (variant instanceof IVariantEnumBlock)
-                    TextureAtlasSheet.unstitchIcons(textureMap,
-                            new ResourceLocation(getRegistryName() + "_" + variant.getResourcePathSuffix()),
-                            ((IVariantEnumBlock<?>) variant).getTextureDimensions());
-            }
-        }
     }
 
+    /**
+     * The first integer is column count. The second one is row count.
+     */
     @SideOnly(Side.CLIENT)
     default Tuple<Integer, Integer> getTextureDimensions() {
         return new Tuple<>(1, 1);
+    }
+
+    interface WithVariant<V extends Enum<V> & IVariantEnum> extends IRailcraftBlock, IRailcraftObject.WithVariant<Block, V> {
+        IBlockState getState(V variant);
+
+        default boolean isEnabled(V variant) {
+            if (variant instanceof IVariantEnumBlockSpecific) {
+                IVariantEnumBlockSpecific<?> specific = (IVariantEnumBlockSpecific<?>) variant;
+                return specific.isEnabled();
+            }
+            return true;
+        }
+
+        @Override
+        default ItemStack makeStack(int quantity, int meta) {
+            return new ItemStack(getObject(), quantity, meta);
+        }
+
+        default IBlockState getItemRenderState(V variant) {
+            return getState(variant);
+        }
+
+        @SideOnly(Side.CLIENT)
+        default void registerItemModel(ItemStack stack, V variant) {
+            ModelManager.registerBlockItemModel(stack, getItemRenderState(variant));
+        }
+
+        @SideOnly(Side.CLIENT)
+        default void registerTextures(TextureMap textureMap) {
+            TextureAtlasSheet.unstitchIcons(textureMap, getBlockTexture(), getTextureDimensions());
+            IVariantEnum[] variants = getVariants();
+            for (IVariantEnum variant : variants) {
+                if (variant instanceof IVariantEnumBlockSpecific)
+                    TextureAtlasSheet.unstitchIcons(textureMap,
+                            new ResourceLocation(getRegistryName() + "_" + variant.getResourcePathSuffix()),
+                            ((IVariantEnumBlockSpecific<?>) variant).getTextureDimensions());
+            }
+        }
     }
 }

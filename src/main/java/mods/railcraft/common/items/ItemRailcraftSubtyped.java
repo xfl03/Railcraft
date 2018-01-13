@@ -26,55 +26,47 @@ import java.util.List;
  *
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public class ItemRailcraftSubtyped extends ItemRailcraft {
-    private final Class<? extends IVariantEnum> variantClass;
-    private final IVariantEnum[] variantValues;
+public class ItemRailcraftSubtyped<V extends Enum<V> & IVariantEnum> extends ItemRailcraft implements IRailcraftItemSimple.WithVariant<V> {
+    private final Class<V> variantClass;
+    private final V[] variantValues;
 
-    public ItemRailcraftSubtyped(Class<? extends IVariantEnum> variantClass) {
+    public ItemRailcraftSubtyped(Class<V> variantClass) {
         this.variantClass = variantClass;
         this.variantValues = variantClass.getEnumConstants();
         setHasSubtypes(true);
         setMaxDamage(0);
     }
 
-    @Nullable
     @Override
-    public Class<? extends IVariantEnum> getVariantEnum() {
+    public Class<V> getVariantEnum() {
         return variantClass;
     }
 
-    @Nullable
     @Override
-    public IVariantEnum[] getVariants() {
+    public V[] getVariants() {
         return variantValues;
     }
 
     @Override
     public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> list) {
-        IVariantEnum[] variants = getVariants();
-        if (variants != null) {
-            for (IVariantEnum variant : variants) {
-                CreativePlugin.addToList(list, getStack(variant));
-            }
-        } else {
-            CreativePlugin.addToList(list, getStack(null));
+        for (V variant : variantValues) {
+            CreativePlugin.addToList(list, getStack(variant));
         }
     }
 
     @Override
     public String getUnlocalizedName(ItemStack stack) {
         int damage = stack.getItemDamage();
-        IVariantEnum[] variants = getVariants();
-        if (variants == null || damage < 0 || damage >= variants.length)
+        V[] variants = variantValues;
+        if (damage < 0 || damage >= variants.length)
             return getUnlocalizedName();
         String tag = getUnlocalizedName() + RailcraftConstants.SEPERATOR + variants[damage].getResourcePathSuffix();
         return LocalizationPlugin.convertTag(tag);
     }
 
     @Override
-    public String getOreTag(@Nullable IVariantEnum variant) {
-        checkVariant(variant);
-        if (variant != null)
+    public String getOreTag(V variant) {
+        if (variant.isEnabled())
             return variant.getOreTag();
         return null;
     }

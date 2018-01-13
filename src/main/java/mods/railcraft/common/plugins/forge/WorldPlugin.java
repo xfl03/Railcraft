@@ -96,12 +96,28 @@ public class WorldPlugin {
         return state.getBlock().isAir(state, world, pos);
     }
 
+    /**
+     * @deprecated Use {@link #matchesState(IBlockAccess, BlockPos, Predicate)} instead.
+     */
+    @Deprecated
     public static boolean isBlockAt(IBlockAccess world, BlockPos pos, @Nullable Block block) {
         return block != null && block == getBlock(world, pos);
     }
 
+    /**
+     * @deprecated Use {@link #matchesState(IBlockAccess, BlockPos, Predicate)} instead.
+     */
+    @Deprecated
     public static boolean isBlockAt(IBlockAccess world, BlockPos pos, Class<? extends Block> blockClass) {
         return blockClass.isInstance(getBlock(world, pos));
+    }
+
+    public static boolean matchesBlock(IBlockAccess world, BlockPos pos, Predicate<Block> checker) {
+        return checker.test(getBlock(world, pos));
+    }
+
+    public static boolean matchesState(IBlockAccess world, BlockPos pos, Predicate<IBlockState> checker) {
+        return checker.test(getBlockState(world, pos));
     }
 
     public static boolean setBlockState(World world, BlockPos pos, IBlockState blockState) {

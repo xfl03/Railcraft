@@ -13,11 +13,7 @@ import mods.railcraft.api.core.RailcraftModule;
 import mods.railcraft.api.crafting.ICrusherCraftingManager;
 import mods.railcraft.api.crafting.RailcraftCraftingManager;
 import mods.railcraft.common.blocks.RailcraftBlocks;
-import mods.railcraft.common.blocks.aesthetics.brick.BrickTheme;
-import mods.railcraft.common.blocks.aesthetics.brick.BrickVariant;
 import mods.railcraft.common.blocks.aesthetics.generic.EnumGeneric;
-import mods.railcraft.common.blocks.machine.alpha.EnumMachineAlpha;
-import mods.railcraft.common.blocks.machine.beta.EnumMachineBeta;
 import mods.railcraft.common.blocks.machine.equipment.EquipmentVariant;
 import mods.railcraft.common.blocks.machine.worldspike.WorldspikeVariant;
 import mods.railcraft.common.blocks.ore.EnumOreMagic;
@@ -284,15 +280,15 @@ public class ModuleFactory extends RailcraftModulePayload {
                     }
                 }
 
-                EnumMachineBeta metalsChest = EnumMachineBeta.METALS_CHEST;
-                if (metalsChest.isAvailable())
-                    CraftingPlugin.addRecipe(metalsChest.getStack(),
-                            "GPG",
-                            "PAP",
-                            "GPG",
-                            'A', new ItemStack(Blocks.ANVIL),
-                            'P', new ItemStack(Blocks.PISTON),
-                            'G', "gearSteel");
+//                EnumMachineBeta metalsChest = EnumMachineBeta.METALS_CHEST;
+//                if (metalsChest.isAvailable())
+//                    CraftingPlugin.addRecipe(metalsChest.getStack(),
+//                            "GPG",
+//                            "PAP",
+//                            "GPG",
+//                            'A', new ItemStack(Blocks.ANVIL),
+//                            'P', new ItemStack(Blocks.PISTON),
+//                            'G', "gearSteel");
             }
 
             private void addWorldspikeOutputs(ICrusherCraftingManager.ICrusherRecipe recipe) {

@@ -11,35 +11,26 @@
 package mods.railcraft.common.blocks;
 
 import mods.railcraft.api.core.IVariantEnum;
-import mods.railcraft.common.core.*;
+import mods.railcraft.common.core.IRailcraftObjectContainer;
+import mods.railcraft.common.items.IRailcraftItem;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-
-import javax.annotation.Nullable;
+import net.minecraft.item.Item;
 
 /**
  * Created by CovertJaguar on 7/26/2016 for Railcraft.
  *
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public interface IRailcraftBlockContainer extends IRailcraftObjectContainer<IRailcraftBlock>, IContainerBlock, IContainerItem, IContainerState {
-    @Nullable
-    default IBlockState getState(@Nullable IVariantEnum variant) {
-        Block block = block();
-        if (block instanceof IRailcraftBlock)
-            return ((IRailcraftBlock) block).getState(variant);
-        return getDefaultState();
+public interface IRailcraftBlockContainer<B extends Block & IRailcraftBlock> extends IRailcraftObjectContainer, IRailcraftObjectContainer.IContainerBlock<B> {
+
+    interface WithItemForm<B extends Block & IRailcraftBlock, I extends Item & IRailcraftItem> extends IRailcraftBlockContainer<B>, IRailcraftObjectContainer.IContainerItemedBlock<B, I> {
+
     }
 
-    @Nullable
-    @Override
-    default IBlockState getDefaultState() {
-        return getObject().map(o -> o.getObject().getDefaultState()).orElse(null);
-    }
-
-    @Nullable
-    @Override
-    default Block block() {
-        return getObject().map(IRailcraftObject::getObject).orElse(null);
+    interface VariantContainer<B extends Block & IRailcraftBlock.WithVariant<V>, I extends Item & IRailcraftItem.WithVariant<V>, V extends Enum<V> & IVariantEnum> extends WithItemForm<B, I>, IRailcraftObjectContainer.IContainerBlockVariant<B, I, V> {
+        default IBlockState getState(V variant) {
+            return block().getState(variant);
+        }
     }
 }

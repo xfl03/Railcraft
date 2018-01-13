@@ -12,6 +12,7 @@ package mods.railcraft.common.blocks.aesthetics.post;
 import mods.railcraft.client.emblems.Emblem;
 import mods.railcraft.client.emblems.EmblemToolsClient;
 import mods.railcraft.common.blocks.ItemBlockRailcraft;
+import mods.railcraft.common.items.IRailcraftItem;
 import mods.railcraft.common.util.inventory.InvTools;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,7 +26,7 @@ import java.util.List;
 /**
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public class ItemPost extends ItemBlockRailcraft {
+public class ItemPost extends ItemBlockRailcraft implements IRailcraftItem.WithVariant<EnumPost> {
 
     public ItemPost(Block block) {
         super(block);
@@ -44,6 +45,11 @@ public class ItemPost extends ItemBlockRailcraft {
         if (nbt == null || !nbt.hasKey("emblem"))
             return "";
         return nbt.getString("emblem");
+    }
+
+    @Override
+    public Class<? extends EnumPost> getVariantEnum() {
+        return EnumPost.class;
     }
 
     @Override

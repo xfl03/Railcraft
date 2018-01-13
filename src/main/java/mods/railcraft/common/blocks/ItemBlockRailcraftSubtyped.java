@@ -10,45 +10,33 @@
 package mods.railcraft.common.blocks;
 
 import mods.railcraft.api.core.IVariantEnum;
-import mods.railcraft.common.core.IRailcraftObject;
 import mods.railcraft.common.core.RailcraftConstants;
 import mods.railcraft.common.plugins.forge.LocalizationPlugin;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nullable;
-
 /**
  * @author CovertJaguar <http://www.railcraft.info/>
  */
-public class ItemBlockRailcraftSubtyped extends ItemBlockRailcraft {
+public class ItemBlockRailcraftSubtyped<V extends Enum<V> & IVariantEnum> extends ItemBlockRailcraft implements IRailcraftItemBlock.WithVariant<V> {
 
-    public ItemBlockRailcraftSubtyped(Block block) {
+    IRailcraftBlock.WithVariant<V> variedBlock;
+
+    public <T extends Block & IRailcraftBlock.WithVariant<V>> ItemBlockRailcraftSubtyped(T block) {
         super(block);
+        this.variedBlock = block;
         setMaxDamage(0);
         setHasSubtypes(true);
     }
 
-    @Nullable
     @Override
-    public Class<? extends IVariantEnum> getVariantEnum() {
-        return ((IRailcraftBlock) block).getVariantEnum();
+    public Class<? extends V> getVariantEnum() {
+        return variedBlock.getVariantEnum();
     }
 
-    @Nullable
     @Override
-    public IVariantEnum[] getVariants() {
-        return ((IRailcraftObject) block).getVariants();
-    }
-
-    @Nullable
-    public IVariantEnum getVariant(ItemStack stack) {
-        int damage = stack.getItemDamage();
-        IVariantEnum[] variants = getVariants();
-        if (variants == null || damage < 0 || damage >= variants.length) {
-            return null;
-        }
-        return variants[damage];
+    public V[] getVariants() {
+        return variedBlock.getVariants();
     }
 
     @Override

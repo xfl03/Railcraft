@@ -12,12 +12,7 @@ package mods.railcraft.common.modules;
 import mods.railcraft.api.core.RailcraftModule;
 import mods.railcraft.common.blocks.RailcraftBlocks;
 import mods.railcraft.common.blocks.charge.ChargeManager;
-import mods.railcraft.common.blocks.machine.alpha.EnumMachineAlpha;
-import mods.railcraft.common.blocks.machine.epsilon.EnumMachineEpsilon;
-import mods.railcraft.common.items.Metal;
 import mods.railcraft.common.items.RailcraftItems;
-import mods.railcraft.common.plugins.forge.CraftingPlugin;
-import mods.railcraft.common.util.crafting.RotorRepairRecipe;
 import net.minecraftforge.common.MinecraftForge;
 
 /**
@@ -68,16 +63,16 @@ public class ModuleCharge extends RailcraftModulePayload {
 //                CraftingPlugin.addShapelessRecipe(rotor, RailcraftPartItems.getTurbineRotor());
 //                }
 
-                EnumMachineEpsilon epsilon = EnumMachineEpsilon.FORCE_TRACK_EMITTER;
-                if (epsilon.isAvailable()) {
-                    CraftingPlugin.addRecipe(epsilon.getStack(),
-                            "PCP",
-                            "CDC",
-                            "PCP",
-                            'P', RailcraftItems.PLATE.getRecipeObject(Metal.TIN),
-                            'D', "blockDiamond",
-                            'C', "ingotCopper");
-                }
+//                EnumMachineEpsilon epsilon = EnumMachineEpsilon.FORCE_TRACK_EMITTER;
+//                if (epsilon.isAvailable()) {
+//                    CraftingPlugin.addRecipe(epsilon.getStack(),
+//                            "PCP",
+//                            "CDC",
+//                            "PCP",
+//                            'P', RailcraftItems.PLATE.getRecipeObject(Metal.TIN),
+//                            'D', "blockDiamond",
+//                            'C', "ingotCopper");
+//                }
 
 //                epsilon = EnumMachineEpsilon.FLUX_TRANSFORMER;
 //                if (epsilon.isAvailable())

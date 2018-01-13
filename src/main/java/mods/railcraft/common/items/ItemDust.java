@@ -26,7 +26,7 @@ import java.util.Locale;
 /**
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public class ItemDust extends ItemRailcraftSubtyped {
+public class ItemDust extends ItemRailcraftSubtyped<ItemDust.EnumDust> {
 
     public ItemDust() {
         super(EnumDust.class);

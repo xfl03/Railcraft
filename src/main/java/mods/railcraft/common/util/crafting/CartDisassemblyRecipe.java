@@ -10,7 +10,7 @@
 
 package mods.railcraft.common.util.crafting;
 
-import mods.railcraft.common.carts.RailcraftCarts;
+import mods.railcraft.common.carts.IRailcraftCartContainer;
 import mods.railcraft.common.util.inventory.iterators.IInvSlot;
 import mods.railcraft.common.util.inventory.iterators.InventoryIterator;
 import net.minecraft.init.Items;
@@ -19,6 +19,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
+
+import javax.annotation.Nonnull;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Created by CovertJaguar on 3/10/2016 for Railcraft.
@@ -60,6 +64,7 @@ public class CartDisassemblyRecipe implements IRecipe {
     }
 
     @Override
+    @Nonnull
     public ItemStack getRecipeOutput() {
         return contents;
     }
@@ -77,16 +82,11 @@ public class CartDisassemblyRecipe implements IRecipe {
     }
 
     public static class RailcraftVariant extends CartDisassemblyRecipe {
-        private final RailcraftCarts cart;
+//        private final IRailcraftCartContainer.WithItem<?> cart;
 
-        public RailcraftVariant(RailcraftCarts cart) {
-            super(cart.getContents(), cart.getItem(), Items.MINECART);
-            this.cart = cart;
-        }
-
-        @Override
-        public ItemStack getRecipeOutput() {
-            return cart.getContents();
+        public RailcraftVariant(IRailcraftCartContainer.WithItem<?> cart) {
+            super(checkNotNull(cart.getContents()), cart.item(), Items.MINECART);
+//            this.cart = cart;
         }
     }
 }

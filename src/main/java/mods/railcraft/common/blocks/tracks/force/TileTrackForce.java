@@ -11,15 +11,14 @@
 package mods.railcraft.common.blocks.tracks.force;
 
 import mods.railcraft.common.blocks.RailcraftTileEntity;
-import mods.railcraft.common.blocks.machine.epsilon.EnumMachineEpsilon;
 import mods.railcraft.common.blocks.machine.single.TileForceTrackEmitter;
 import mods.railcraft.common.blocks.tracks.TrackTools;
 import mods.railcraft.common.plugins.forge.WorldPlugin;
+import mods.railcraft.common.util.misc.Predicates;
 import net.minecraft.block.BlockRailBase;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
@@ -29,14 +28,14 @@ import javax.annotation.Nullable;
  * @author CovertJaguar <http://www.railcraft.info>
  */
 public class TileTrackForce extends RailcraftTileEntity {
+    @Nullable
     public TileForceTrackEmitter emitter;
 
     public void checkForEmitter() {
-        World world = theWorld();
-        assert world != null;
-        BlockRailBase.EnumRailDirection meta = TrackTools.getTrackDirectionRaw(world, getPos());
+        assert emitter != null;
+        BlockRailBase.EnumRailDirection dir = TrackTools.getTrackDirectionRaw(worldObj, getPos());
         BlockPos checkPos = getPos().down();
-        if (meta == BlockRailBase.EnumRailDirection.NORTH_SOUTH) {
+        if (dir == BlockRailBase.EnumRailDirection.NORTH_SOUTH) {
             if (isValidEmitterTile(emitter, EnumFacing.NORTH, EnumFacing.SOUTH))
                 return;
             else
@@ -67,7 +66,7 @@ public class TileTrackForce extends RailcraftTileEntity {
                     return;
             }
         }
-        WorldPlugin.setBlockToAir(world, getPos());
+        WorldPlugin.setBlockToAir(worldObj, getPos());
     }
 
     @Nullable
@@ -80,11 +79,9 @@ public class TileTrackForce extends RailcraftTileEntity {
     }
 
     private boolean isValidEmitter(BlockPos pos, EnumFacing facing) {
-        World world = theWorld();
-        assert world != null;
-        if (!WorldPlugin.isBlockAt(world, pos, EnumMachineEpsilon.FORCE_TRACK_EMITTER.block()))
+        if (!WorldPlugin.matchesBlock(worldObj, pos, Predicates.alwaysFalse()/* TODO EnumMachineEpsilon.FORCE_TRACK_EMITTER.block()*/))
             return false;
-        TileEntity tile = WorldPlugin.getBlockTile(world, pos);
+        TileEntity tile = WorldPlugin.getBlockTile(worldObj, pos);
         if (tile instanceof TileForceTrackEmitter && isValidEmitterTile((TileForceTrackEmitter) tile, facing)) {
             setEmitter(emitter);
             return true;

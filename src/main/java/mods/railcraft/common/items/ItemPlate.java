@@ -9,23 +9,20 @@
  -----------------------------------------------------------------------------*/
 package mods.railcraft.common.items;
 
-import mods.railcraft.api.core.IVariantEnum;
 import mods.railcraft.api.crafting.RailcraftCraftingManager;
-import mods.railcraft.common.util.collections.CollectionTools;
-
-import javax.annotation.Nullable;
+import mods.railcraft.common.core.IRailcraftObjectContainer;
 
 import static mods.railcraft.common.items.Metal.*;
 
 public class ItemPlate extends ItemMetal {
 
     public ItemPlate() {
-        super(Form.PLATE, true, false, CollectionTools.createIndexedLookupTable(IRON, STEEL, TIN, COPPER, LEAD, SILVER, BRONZE, GOLD, NICKEL, INVAR, ZINC, BRASS));
+        super(Form.PLATE, true, false, IRON, STEEL, TIN, COPPER, LEAD, SILVER, BRONZE, GOLD, NICKEL, INVAR, ZINC, BRASS);
     }
 
     @Override
     public void defineRecipes() {
-        RailcraftItems plate = RailcraftItems.PLATE;
+        IRailcraftObjectContainer.IContainerItemVariant<?, Metal> plate = RailcraftItems.PLATE;
 
         for (Metal m : getMetalBiMap().values()) {
             RailcraftCraftingManager.rollingMachine.addRecipe(plate.getStack(4, m),

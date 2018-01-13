@@ -11,7 +11,7 @@ package mods.railcraft.common.blocks.detector;
 
 import mods.railcraft.api.core.IRailcraftModule;
 import mods.railcraft.common.blocks.IRailcraftBlockContainer;
-import mods.railcraft.common.blocks.IVariantEnumBlock;
+import mods.railcraft.common.blocks.IVariantEnumBlockSpecific;
 import mods.railcraft.common.blocks.RailcraftBlocks;
 import mods.railcraft.common.blocks.detector.types.*;
 import mods.railcraft.common.modules.ModuleAutomation;
@@ -26,7 +26,7 @@ import java.util.Map;
 /**
  * @author CovertJaguar <http://www.railcraft.info/>
  */
-public enum EnumDetector implements IVariantEnumBlock<EnumDetector> {
+public enum EnumDetector implements IVariantEnumBlockSpecific<EnumDetector> {
 
     ITEM(ModuleAutomation.class, DetectorItem.class),
     ANY(ModuleAutomation.class, Detector.class),
@@ -92,7 +92,7 @@ public enum EnumDetector implements IVariantEnumBlock<EnumDetector> {
     }
 
     @Override
-    public IRailcraftBlockContainer getContainer() {
+    public IRailcraftBlockContainer.VariantContainer<?, ?, EnumDetector> getContainer() {
         return RailcraftBlocks.DETECTOR;
     }
 

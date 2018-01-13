@@ -167,17 +167,18 @@ public class BlockDetector extends BlockContainerRailcraftSubtyped<EnumDetector>
                 "XXX",
                 'X', Items.LEATHER,
                 'P', Blocks.STONE_PRESSURE_PLATE);
-    }
-
-    @Override
-    public void finalizeDefinition() {
-        if (BrickTheme.INFERNAL.getBlock() != null)
+        if (BrickTheme.INFERNAL.isLoaded())
             CraftingPlugin.addRecipe(new ItemStack(this, 1, EnumDetector.LOCOMOTIVE.ordinal()),
                     "XXX",
                     "XPX",
                     "XXX",
                     'X', BrickTheme.INFERNAL.getStack(1, BrickVariant.BRICK),
                     'P', Blocks.STONE_PRESSURE_PLATE);
+    }
+
+    @Override
+    public void finalizeDefinition() {
+        super.finalizeDefinition();
     }
 
     /**

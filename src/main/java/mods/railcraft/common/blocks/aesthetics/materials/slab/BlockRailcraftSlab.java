@@ -9,7 +9,6 @@
  -----------------------------------------------------------------------------*/
 package mods.railcraft.common.blocks.aesthetics.materials.slab;
 
-import mods.railcraft.api.core.IVariantEnum;
 import mods.railcraft.client.particles.ParticleHelper;
 import mods.railcraft.common.blocks.BlockContainerRailcraft;
 import mods.railcraft.common.blocks.aesthetics.materials.IMaterialBlock;
@@ -78,12 +77,6 @@ public class BlockRailcraftSlab extends BlockContainerRailcraft implements IMate
         GameRegistry.registerTileEntity(TileSlab.class, "RCSlabTile");
     }
 
-    @Nullable
-    @Override
-    public Class<? extends IVariantEnum> getVariantEnum() {
-        return Materials.class;
-    }
-
     @Override
     @Nonnull
     protected BlockStateContainer createBlockState() {
@@ -124,9 +117,8 @@ public class BlockRailcraftSlab extends BlockContainerRailcraft implements IMate
         }
     }
 
-    @Nonnull
     @Override
-    public ItemStack getStack(int qty, @Nullable IVariantEnum variant) {
+    public ItemStack getStack(int qty, Materials variant) {
         return Materials.getStack(this, qty, variant);
     }
 
@@ -335,7 +327,7 @@ public class BlockRailcraftSlab extends BlockContainerRailcraft implements IMate
                     return true;
                 if (side == UP && super.shouldSideBeRendered(state, worldIn, pos, side))
                     return true;
-                if (!WorldPlugin.isBlockAt(worldIn, offsetPos, this))
+                if (!WorldPlugin.matchesBlock(worldIn, offsetPos, t -> t == this))
                     return true;
                 TileSlab otherSlab = getSlabTile(worldIn, offsetPos);
                 if (otherSlab != null) {
@@ -349,7 +341,7 @@ public class BlockRailcraftSlab extends BlockContainerRailcraft implements IMate
                     return true;
                 if (side == DOWN && super.shouldSideBeRendered(state, worldIn, pos, side))
                     return true;
-                if (!WorldPlugin.isBlockAt(worldIn, offsetPos, this))
+                if (!WorldPlugin.matchesBlock(worldIn, offsetPos, t -> t == this))
                     return true;
                 TileSlab otherSlab = getSlabTile(worldIn, offsetPos);
                 if (otherSlab != null) {

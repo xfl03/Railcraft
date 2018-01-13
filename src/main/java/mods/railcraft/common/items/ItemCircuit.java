@@ -9,7 +9,7 @@
  -----------------------------------------------------------------------------*/
 package mods.railcraft.common.items;
 
-import mods.railcraft.api.core.IRailcraftRecipeIngredient;
+import mods.railcraft.api.core.IRailcraftRecipeIngredientContainer;
 import mods.railcraft.api.core.IVariantEnum;
 import mods.railcraft.common.plugins.forge.CraftingPlugin;
 import mods.railcraft.common.plugins.forge.RailcraftRegistry;
@@ -23,7 +23,7 @@ import java.util.Locale;
 /**
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public class ItemCircuit extends ItemRailcraftSubtyped {
+public class ItemCircuit extends ItemRailcraftSubtyped<ItemCircuit.EnumCircuit> {
 
     public ItemCircuit() {
         super(EnumCircuit.class);
@@ -91,7 +91,7 @@ public class ItemCircuit extends ItemRailcraftSubtyped {
         }
 
         @Override
-        public Object getAlternate(IRailcraftRecipeIngredient container) {
+        public Object getAlternate(IRailcraftRecipeIngredientContainer container) {
             return alternate;
         }
 

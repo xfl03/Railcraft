@@ -10,7 +10,7 @@
 package mods.railcraft.common.blocks.ore;
 
 import mods.railcraft.common.blocks.IRailcraftBlockContainer;
-import mods.railcraft.common.blocks.IVariantEnumBlock;
+import mods.railcraft.common.blocks.IVariantEnumBlockSpecific;
 import mods.railcraft.common.blocks.RailcraftBlocks;
 import mods.railcraft.common.modules.ModuleWorld;
 
@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
 /**
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public enum EnumOre implements IVariantEnumBlock<EnumOre> {
+public enum EnumOre implements IVariantEnumBlockSpecific<EnumOre> {
 
     SULFUR("sulfur", "oreSulfur"),
     SALTPETER("saltpeter", "oreSaltpeter"),

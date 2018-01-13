@@ -10,7 +10,6 @@
 package mods.railcraft.common.items;
 
 import mods.railcraft.common.plugins.forge.CraftingPlugin;
-import mods.railcraft.common.util.collections.CollectionTools;
 
 import static mods.railcraft.common.items.Metal.*;
 
@@ -20,7 +19,7 @@ import static mods.railcraft.common.items.Metal.*;
 public class ItemNugget extends ItemMetal {
 
     public ItemNugget() {
-        super(Form.NUGGET, true, true, CollectionTools.createIndexedLookupTable(IRON, STEEL, COPPER, TIN, LEAD, SILVER, BRONZE, NICKEL, INVAR, ZINC, BRASS));
+        super(Form.NUGGET, true, true, IRON, STEEL, COPPER, TIN, LEAD, SILVER, BRONZE, NICKEL, INVAR, ZINC, BRASS);
     }
 
     @Override

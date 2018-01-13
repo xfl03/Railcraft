@@ -14,7 +14,6 @@ import mods.railcraft.common.blocks.ItemBlockRailcraftSubtyped;
 import mods.railcraft.common.gui.tooltips.ToolTip;
 import mods.railcraft.common.plugins.forge.LocalizationPlugin;
 import mods.railcraft.common.util.misc.HumanReadableNumberFormatter;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
@@ -23,15 +22,15 @@ import net.minecraft.item.ItemStack;
  *
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public class ItemChargeBattery extends ItemBlockRailcraftSubtyped {
-    public ItemChargeBattery(Block block) {
+public class ItemChargeBattery extends ItemBlockRailcraftSubtyped<BatteryVariant> {
+    public ItemChargeBattery(BlockChargeBattery block) {
         super(block);
     }
 
     @Override
     public ToolTip getToolTip(ItemStack stack, EntityPlayer player, boolean adv) {
         ToolTip tips = super.getToolTip(stack, player, adv);
-        BatteryVariant variant = (BatteryVariant) getVariant(stack);
+        BatteryVariant variant = getVariant(stack);
         if (variant != null) {
             if (tips == null)
                 tips = new ToolTip();

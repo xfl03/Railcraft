@@ -40,7 +40,7 @@ public class ModuleStructures extends RailcraftModulePayload {
             @Override
             public void construction() {
                 for (BrickTheme brick : BrickTheme.VALUES) {
-                    add(brick.getContainer());
+                    add(brick);
                 }
                 add(
                         RailcraftItems.STONE_CARVER,
@@ -116,8 +116,9 @@ public class ModuleStructures extends RailcraftModulePayload {
 
             @Override
             public void init() {
-                Block blockPost = RailcraftBlocks.POST.block();
-                if (blockPost != null) {
+                if (RailcraftBlocks.POST.isLoaded()) {
+                    // TODO move to post class!
+                    Block blockPost = RailcraftBlocks.POST.block();
                     CraftingPlugin.addShapelessRecipe(EnumPost.WOOD.getStack(4), RailcraftItems.TIE.getRecipeObject(ItemTie.EnumTie.WOOD));
                     CraftingPlugin.addRecipe(EnumPost.WOOD_PLATFORM.getStack(),
                             " T ",

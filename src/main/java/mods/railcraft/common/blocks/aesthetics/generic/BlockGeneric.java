@@ -9,7 +9,6 @@
  -----------------------------------------------------------------------------*/
 package mods.railcraft.common.blocks.aesthetics.generic;
 
-import mods.railcraft.api.core.IVariantEnum;
 import mods.railcraft.common.blocks.BlockRailcraftSubtyped;
 import mods.railcraft.common.blocks.RailcraftBlocks;
 import mods.railcraft.common.blocks.machine.RailcraftBlockMetadata;
@@ -42,7 +41,6 @@ import java.util.Random;
 
 @RailcraftBlockMetadata(variant = EnumGeneric.class)
 public class BlockGeneric extends BlockRailcraftSubtyped<EnumGeneric> {
-
 
     public BlockGeneric() {
         super(Material.ROCK);
@@ -97,18 +95,17 @@ public class BlockGeneric extends BlockRailcraftSubtyped<EnumGeneric> {
     }
 
     @Override
-    public IBlockState getState(@Nullable IVariantEnum variant) {
+    public IBlockState getState(EnumGeneric variant) {
         IBlockState state = getDefaultState();
-        if (variant != null) {
-            checkVariant(variant);
-            state = state.withProperty(getVariantProperty(), (EnumGeneric) variant);
+        if (variant.isAvailable()) {
+            state = state.withProperty(getVariantProperty(), variant);
         }
         return state;
     }
 
-    @Nullable
+    @Deprecated
     public static BlockGeneric getBlock() {
-        return (BlockGeneric) RailcraftBlocks.GENERIC.block();
+        return RailcraftBlocks.GENERIC.block();
     }
 
     /**

@@ -10,7 +10,7 @@
 package mods.railcraft.common.blocks.ore;
 
 import mods.railcraft.common.blocks.BlockRailcraftSubtyped;
-import mods.railcraft.common.blocks.IVariantEnumBlock;
+import mods.railcraft.common.blocks.IVariantEnumBlockSpecific;
 import mods.railcraft.common.carts.EntityTunnelBore;
 import mods.railcraft.common.plugins.forestry.ForestryPlugin;
 import mods.railcraft.common.plugins.forge.HarvestPlugin;
@@ -22,7 +22,7 @@ import net.minecraftforge.oredict.OreDictionary;
 /**
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public abstract class BlockOreMetalBase<V extends Enum<V> & IVariantEnumBlock<V>> extends BlockRailcraftSubtyped<V> {
+public abstract class BlockOreMetalBase<V extends Enum<V> & IVariantEnumBlockSpecific<V>> extends BlockRailcraftSubtyped<V> {
     protected BlockOreMetalBase() {
         super(Material.ROCK);
         setResistance(5);
@@ -36,7 +36,7 @@ public abstract class BlockOreMetalBase<V extends Enum<V> & IVariantEnumBlock<V>
         HarvestPlugin.setBlockHarvestLevel("pickaxe", 1, this);
 
         //noinspection ConstantConditions
-        for (IVariantEnumBlock<V> ore : getVariants()) {
+        for (IVariantEnumBlockSpecific<V> ore : getVariants()) {
             ForestryPlugin.addBackpackItem("forestry.miner", ore.getStack());
             if (ore.isEnabled())
                 OreDictionary.registerOre(ore.getOreTag(), ore.getStack());

@@ -10,12 +10,12 @@
 
 package mods.railcraft.common.blocks.machine.worldspike;
 
+import mods.railcraft.common.blocks.machine.BlockMachine;
 import mods.railcraft.common.blocks.machine.ItemMachine;
 import mods.railcraft.common.carts.ItemCartWorldspike;
 import mods.railcraft.common.core.RailcraftConstants;
 import mods.railcraft.common.gui.tooltips.ToolTip;
 import mods.railcraft.common.plugins.forge.LocalizationPlugin;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
@@ -26,15 +26,15 @@ import javax.annotation.Nullable;
  *
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public class ItemWorldspike extends ItemMachine {
-    public ItemWorldspike(Block block) {
+public class ItemWorldspike extends ItemMachine<WorldspikeVariant> {
+    public ItemWorldspike(BlockMachine<WorldspikeVariant> block) {
         super(block);
     }
 
     @Override
     public ToolTip getToolTip(ItemStack stack, EntityPlayer player, boolean adv) {
         ToolTip tips = super.getToolTip(stack, player, adv);
-        WorldspikeVariant variant = (WorldspikeVariant) getVariant(stack);
+        WorldspikeVariant variant = getVariant(stack);
         if (variant != null && !variant.getFuelList().isEmpty()) {
             tips = addFuelInfo(tips, stack);
         }

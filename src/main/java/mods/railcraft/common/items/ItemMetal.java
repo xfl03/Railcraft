@@ -10,12 +10,13 @@
 package mods.railcraft.common.items;
 
 import com.google.common.collect.BiMap;
-import com.google.common.collect.Maps;
 import mods.railcraft.api.core.IVariantEnum;
 import mods.railcraft.common.plugins.forestry.ForestryPlugin;
 import mods.railcraft.common.plugins.forge.RailcraftRegistry;
+import mods.railcraft.common.util.collections.CollectionTools;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import scala.tools.cmd.Meta;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -25,28 +26,24 @@ import static mods.railcraft.common.items.Metal.Form;
 /**
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public abstract class ItemMetal extends ItemRailcraftSubtyped {
+public abstract class ItemMetal extends ItemRailcraftSubtyped<Metal> {
     private final BiMap<Integer, Metal> metalBiMap;
-    private final IVariantEnum[] variantArray;
-    private final Form form;
+    private final Metal[] variantArray;
+    private final Form<Metal> form;
     private final boolean registerOreDict;
     private final boolean registerMinerBackpack;
 
-    protected ItemMetal(Form form, boolean registerOreDict, boolean registerMinerBackpack, BiMap<Integer, Metal> variants) {
+    protected ItemMetal(Form<Metal> form, boolean registerOreDict, boolean registerMinerBackpack, Metal... variants) {
         super(Metal.class);
         this.form = form;
         this.registerOreDict = registerOreDict;
         this.registerMinerBackpack = registerMinerBackpack;
-        this.metalBiMap = Maps.unmodifiableBiMap(variants);
-        variantArray = new IVariantEnum[metalBiMap.size()];
-        for (int i = 0; i < variants.size(); i++) {
-            variantArray[i] = variants.get(i);
-        }
+        this.metalBiMap = CollectionTools.createIndexedLookupTable(variants);
+        this.variantArray = variants;
     }
 
-    @Nullable
     @Override
-    public IVariantEnum[] getVariants() {
+    public Metal[] getVariants() {
         return variantArray;
     }
 
@@ -61,27 +58,25 @@ public abstract class ItemMetal extends ItemRailcraftSubtyped {
             RailcraftRegistry.register(this, entry.getValue(), stack);
         }
         if (registerOreDict)
-            for (Metal m : getMetalBiMap().values()) {
+            for (Metal m : variantArray) {
                 OreDictionary.registerOre(m.getOreTag(form), m.getStack(form));
             }
         if (registerMinerBackpack)
-            for (Integer meta : getMetalBiMap().keySet()) {
-                ItemStack stack = new ItemStack(this, 1, meta);
+            for (int i = 0; i < variantArray.length; i++) {
+                ItemStack stack = new ItemStack(this, 1, i);
                 ForestryPlugin.addBackpackItem("forestry.miner", stack);
             }
     }
 
     @Override
-    public ItemStack getStack(int qty, @Nullable IVariantEnum variant) {
+    public ItemStack getStack(int qty, Metal variant) {
         checkVariant(variant);
-        Integer meta = metalBiMap.inverse().get((Metal) variant);
-        if (meta == null)
-            meta = 0;
+        int meta = metalBiMap.inverse().getOrDefault((Metal) variant, 0);
         return new ItemStack(this, qty, meta);
     }
 
     @Override
-    public String getOreTag(@Nullable IVariantEnum variant) {
+    public String getOreTag(Metal variant) {
         checkVariant(variant);
         return ((Metal) variant).getOreTag(form);
     }

@@ -98,12 +98,6 @@ public class BlockRailcraftStairs extends BlockStairs implements IMaterialBlock 
         MatTools.defineCrusherRecipes(this);
     }
 
-    @Nonnull
-    @Override
-    public ItemStack getStack(int qty, @Nullable IVariantEnum variant) {
-        return Materials.getStack(this, qty, variant);
-    }
-
     @Override
     @Nonnull
     protected BlockStateContainer createBlockState() {

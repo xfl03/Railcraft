@@ -10,11 +10,12 @@
 package mods.railcraft.common.blocks.aesthetics.generic;
 
 import mods.railcraft.common.blocks.ItemBlockRailcraft;
+import mods.railcraft.common.items.IRailcraftItem;
 import mods.railcraft.common.items.ItemCoke;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 
-public class ItemBlockGeneric extends ItemBlockRailcraft {
+public class ItemBlockGeneric extends ItemBlockRailcraft implements IRailcraftItem.WithVariant<EnumGeneric> {
 
     public ItemBlockGeneric(Block block) {
         super(block);
@@ -30,6 +31,11 @@ public class ItemBlockGeneric extends ItemBlockRailcraft {
     @Override
     public String getUnlocalizedName(ItemStack stack) {
         return EnumGeneric.fromOrdinal(stack.getItemDamage()).getTag();
+    }
+
+    @Override
+    public Class<? extends EnumGeneric> getVariantEnum() {
+        return EnumGeneric.class;
     }
 
     @Override

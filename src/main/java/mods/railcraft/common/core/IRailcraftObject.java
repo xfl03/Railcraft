@@ -10,117 +10,140 @@
 
 package mods.railcraft.common.core;
 
-import mods.railcraft.api.core.IRailcraftRegistryEntry;
+import com.google.common.base.Preconditions;
 import mods.railcraft.api.core.IVariantEnum;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.IForgeRegistryEntry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nullable;
+import javax.annotation.OverridingMethodsMustInvokeSuper;
 
 /**
  * All Railcraft Items and Blocks should implement this.
  *
  * Created by CovertJaguar on 3/14/2016.
  */
-public interface IRailcraftObject<T> extends IRailcraftRegistryEntry<T> {
-    T getObject();
+@SuppressWarnings("unused")
+public interface IRailcraftObject<T extends IForgeRegistryEntry<T>> extends IForgeRegistryEntry<T> {
 
-    @Nullable
-    default Object getRecipeObject(@Nullable IVariantEnum variant) {
-        return getStack(1, variant);
+    /**
+     * Gets the object itself. Should be overridden at best.
+     *
+     * @return The object itself
+     */
+    @SuppressWarnings("unchecked")
+    default T getObject() {
+        return (T) this;
     }
 
-    @Nullable
-    default ItemStack getStack() {
-        return getStack(1, null);
-    }
-
-    @Nullable
-    default ItemStack getStack(int qty) {
-        return getStack(qty, null);
-    }
-
-    @Nullable
-    default ItemStack getStack(@Nullable IVariantEnum variant) {
-        return getStack(1, variant);
-    }
-
-    @Nullable
-    default ItemStack getStack(int qty, @Nullable IVariantEnum variant) {
-        int meta;
-        if (variant != null) {
-            checkVariant(variant);
-            if (!variant.isEnabled())
-                return null;
-            meta = variant.ordinal();
-        } else
-            meta = 0;
-        Object obj = getObject();
-        if (obj instanceof Item)
-            return new ItemStack((Item) obj, qty, meta);
-        if (obj instanceof Block)
-            return new ItemStack((Block) obj, qty, meta);
-        throw new RuntimeException("IRailcraftObject.getStack(int, IVariantEnum) needs to be overridden");
-    }
-
-    @Nullable
-    default ItemStack getWildcard() {
-        Object obj = getObject();
-        if (obj instanceof Item)
-            return new ItemStack((Item) obj, 1, OreDictionary.WILDCARD_VALUE);
-        if (obj instanceof Block)
-            return new ItemStack((Block) obj, 1, OreDictionary.WILDCARD_VALUE);
-        return null;
-    }
-
-    default void defineRecipes() {
-    }
-
+    /**
+     * Do pre initialization stage works here.
+     */
+    @OverridingMethodsMustInvokeSuper
     default void initializeDefinition() {
     }
 
+    /**
+     * Do initialization stage works here.
+     */
+    @OverridingMethodsMustInvokeSuper
+    default void defineRecipes() {
+    }
+
+    /**
+     * Do post initialization stage works here.
+     */
+    @OverridingMethodsMustInvokeSuper
     default void finalizeDefinition() {
     }
 
+    /**
+     * Do client-side pre initialization works here.
+     */
     @SideOnly(Side.CLIENT)
+    @OverridingMethodsMustInvokeSuper
     default void initializeClient() {
     }
 
-    default void checkVariant(@Nullable IVariantEnum variant) {
-        Class clazz = variant == null ? null : variant.getClass();
-        if (clazz != null && clazz.isAnonymousClass())
-            clazz = clazz.getEnclosingClass();
-        if (getVariantEnum() != clazz)
-            throw new RuntimeException("Incorrect Variant object used.");
-    }
-
-    @Nullable
-    default Class<? extends IVariantEnum> getVariantEnum() {
-        return null;
-    }
-
-    @Nullable
-    default IVariantEnum[] getVariants() {
-        Class<? extends IVariantEnum> variantEnum = getVariantEnum();
-        if (variantEnum != null) {
-            return variantEnum.getEnumConstants();
-        }
-        return null;
+    /**
+     * Do client-side post initialization works here.
+     */
+    @SideOnly(Side.CLIENT)
+    @OverridingMethodsMustInvokeSuper
+    default void finalizeClient() {
     }
 
     default String getResourcePath() {
-        return ((IForgeRegistryEntry) getObject()).getRegistryName().getResourcePath();
+        return getObject().getRegistryName().getResourcePath();
     }
 
-    @Override
-    default ResourceLocation getRegistryName(IVariantEnum variant) {
-        checkVariant(variant);
-        return IRailcraftRegistryEntry.super.getRegistryName(variant);
+    /**
+     * Represents objects that have item forms.
+     */
+    interface RecipeIngredient<T extends IForgeRegistryEntry<T>> extends IRailcraftObject<T> {
+
+        ItemStack makeStack(int quantity, int meta);
+
+        default ItemStack getStack() {
+            return getStack(1);
+        }
+
+        default ItemStack getStack(int qty) {
+            return makeStack(qty, 0);
+        }
+
+        default ItemStack getWildcard() {
+            return makeStack(1, OreDictionary.WILDCARD_VALUE);
+        }
+    }
+
+    /**
+     * Represents objects with variants as meta data.
+     */
+    interface WithVariant<T extends IForgeRegistryEntry<T>, V extends Enum<V> & IVariantEnum> extends RecipeIngredient<T> {
+
+        Class<? extends V> getVariantEnum();
+
+        default ResourceLocation getRegistryName(V variant) {
+            checkVariant(variant);
+            return new ResourceLocation(getRegistryName().getResourceDomain(),
+                    getRegistryName().getResourcePath() + "." + variant.getResourcePathSuffix());
+        }
+
+        default ItemStack getStack(V variant) {
+            return getStack(1, variant);
+        }
+
+        default ItemStack getStack(int qty, V variant) {
+            checkVariant(variant);
+            return makeStack(qty, variant.ordinal());
+        }
+
+        default Object getRecipeObject(V variant) {
+            return getStack(1, variant);
+        }
+
+        @Contract("null -> fail")
+        default V checkVariant(@Nullable IVariantEnum variant) {
+            Class<?> clazz = Preconditions.checkNotNull(variant).getClass();
+            if (clazz.isAnonymousClass())
+                clazz = clazz.getEnclosingClass(); // Subclass enums
+            Class<? extends V> variantType = getVariantEnum();
+            if (variantType != clazz)
+                throw new RuntimeException("Incorrect Variant object used.");
+            if (!variant.isEnabled())
+                throw new RuntimeException("Variant is disabled!");
+            return variantType.cast(variant);
+        }
+
+        default V[] getVariants() {
+            Class<? extends V> variantEnum = getVariantEnum();
+            return variantEnum.getEnumConstants();
+        }
     }
 }

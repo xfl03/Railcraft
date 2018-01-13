@@ -9,14 +9,15 @@
  ******************************************************************************/
 package mods.railcraft.common.blocks.aesthetics.brick;
 
+import mods.railcraft.common.blocks.ISubtypedBlock;
 import mods.railcraft.common.blocks.ItemBlockRailcraftSubtyped;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 
 
-public class ItemBrick extends ItemBlockRailcraftSubtyped {
+public class ItemBrick extends ItemBlockRailcraftSubtyped<BrickVariant> {
 
-    public ItemBrick(Block block) {
+    public <T extends Block & ISubtypedBlock<BrickVariant>> ItemBrick(T block) {
         super(block);
     }
 

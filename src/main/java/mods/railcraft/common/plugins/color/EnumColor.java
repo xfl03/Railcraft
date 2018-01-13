@@ -10,7 +10,7 @@
 package mods.railcraft.common.plugins.color;
 
 import com.google.common.primitives.Ints;
-import mods.railcraft.api.core.IRailcraftRecipeIngredient;
+import mods.railcraft.api.core.IRailcraftRecipeIngredientContainer;
 import mods.railcraft.api.core.IVariantEnum;
 import mods.railcraft.common.plugins.forge.LocalizationPlugin;
 import mods.railcraft.common.util.inventory.InvTools;
@@ -21,19 +21,17 @@ import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.Contract;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
 /**
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public enum EnumColor implements IVariantEnum, IRailcraftRecipeIngredient {
+public enum EnumColor implements IVariantEnum, IRailcraftRecipeIngredientContainer {
 
     WHITE(0xFFFFFF, "dyeWhite", "white"),
     ORANGE(0xFF6A00, "dyeOrange", "orange"),
@@ -229,7 +227,7 @@ public enum EnumColor implements IVariantEnum, IRailcraftRecipeIngredient {
 
     @Nullable
     @Override
-    public Object getAlternate(IRailcraftRecipeIngredient container) {
+    public Object getAlternate(IRailcraftRecipeIngredientContainer container) {
         return null;
     }
 

@@ -25,7 +25,7 @@ import org.lwjgl.opengl.GL11;
 public class TESREmblemPost extends TileEntitySpecialRenderer<TilePostEmblem> {
     @Override
     public void renderTileEntityAt(TilePostEmblem post, double x, double y, double z, float partialTicks, int destroyStage) {
-        if (post.getEmblem() == null || post.getEmblem().equals(""))
+        if (post.getEmblem() == null || post.getEmblem().isEmpty())
             return;
 
         OpenGL.glPushMatrix();

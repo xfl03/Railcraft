@@ -9,7 +9,7 @@
  -----------------------------------------------------------------------------*/
 package mods.railcraft.common.items;
 
-import mods.railcraft.api.core.IRailcraftRecipeIngredient;
+import mods.railcraft.api.core.IRailcraftRecipeIngredientContainer;
 import mods.railcraft.api.core.IVariantEnum;
 import mods.railcraft.common.plugins.forge.CraftingPlugin;
 import mods.railcraft.common.plugins.forge.RailcraftRegistry;
@@ -18,7 +18,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.Locale;
 
-public class ItemGear extends ItemRailcraftSubtyped {
+public class ItemGear extends ItemRailcraftSubtyped<ItemGear.EnumGear> {
 
     public ItemGear() {
         super(EnumGear.class);
@@ -41,7 +41,7 @@ public class ItemGear extends ItemRailcraftSubtyped {
 
     @Override
     public void defineRecipes() {
-        RailcraftItems gear = RailcraftItems.GEAR;
+        RailcraftItems.VariedItemContainer<ItemGear, EnumGear> gear = RailcraftItems.GEAR;
 
         CraftingPlugin.addRecipe(gear.getStack(2, EnumGear.BUSHING),
                 "TT",
@@ -100,7 +100,7 @@ public class ItemGear extends ItemRailcraftSubtyped {
         }
 
         @Override
-        public Object getAlternate(IRailcraftRecipeIngredient container) {
+        public Object getAlternate(IRailcraftRecipeIngredientContainer container) {
             return alternate;
         }
 

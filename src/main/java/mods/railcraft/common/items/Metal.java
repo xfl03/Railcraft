@@ -11,9 +11,8 @@ package mods.railcraft.common.items;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import mods.railcraft.api.core.IRailcraftRecipeIngredient;
+import mods.railcraft.api.core.IRailcraftRecipeIngredientContainer;
 import mods.railcraft.api.core.IVariantEnum;
-import mods.railcraft.common.blocks.IRailcraftBlockContainer;
 import mods.railcraft.common.blocks.RailcraftBlocks;
 import mods.railcraft.common.blocks.aesthetics.generic.EnumGeneric;
 import mods.railcraft.common.blocks.ore.EnumOreMetal;
@@ -48,11 +47,12 @@ public enum Metal implements IVariantEnum {
     INVAR("Invar"),
     ZINC("Zinc"),
     BRASS("Brass"),;
+
     public static final Metal[] VALUES = values();
     public static final Metal[] CLASSIC_METALS = {IRON, GOLD, COPPER, TIN, LEAD, SILVER};
-    private static final BiMap<Metal, IVariantEnum> oreMap = HashBiMap.create();
-    private static final BiMap<Metal, IVariantEnum> poorOreMap = HashBiMap.create();
-    private static final BiMap<Metal, IVariantEnum> blockMap = HashBiMap.create();
+    private static final BiMap<Metal, EnumOreMetal> oreMap = HashBiMap.create();
+    private static final BiMap<Metal, EnumOreMetalPoor> poorOreMap = HashBiMap.create();
+    private static final BiMap<Metal, EnumGeneric> blockMap = HashBiMap.create();
 
     public static void init() {
         oreMap.put(COPPER, EnumOreMetal.COPPER);
@@ -99,8 +99,8 @@ public enum Metal implements IVariantEnum {
 
     @Nullable
     @Override
-    public Object getAlternate(IRailcraftRecipeIngredient container) {
-        Form form = Form.containerMap.inverse().get(container);
+    public Object getAlternate(IRailcraftRecipeIngredientContainer container) {
+        Form<?> form = Form.containerMap.inverse().get(container);
         return form != null ? form.getOreDictTag(this) : null;
     }
 
@@ -109,27 +109,27 @@ public enum Metal implements IVariantEnum {
         return tag;
     }
 
-    public String getOreTag(Form form) {
+    public String getOreTag(Form<?> form) {
         return form.orePrefix + oreSuffix;
     }
 
     @Nullable
-    public ItemStack getStack(Form form) {
+    public ItemStack getStack(Form<?> form) {
         return getStack(form, 1);
     }
 
     @Nullable
-    public ItemStack getStack(Form form, int qty) {
+    public ItemStack getStack(Form<?> form, int qty) {
         return form.getStack(this, qty);
     }
 
     @Nullable
-    public IBlockState getState(Form form) {
+    public IBlockState getState(Form<?> form) {
         return form.getState(this);
     }
 
-    public enum Form {
-        NUGGET("nugget", RailcraftItems.NUGGET) {
+    public static class Form<V extends Enum<V> & IVariantEnum> {
+        public static final Form<Metal> NUGGET = new Form<Metal>("nugget", RailcraftItems.NUGGET) {
             @Nullable
             @Override
             public ItemStack getStack(Metal metal, int qty) {
@@ -139,8 +139,8 @@ public enum Metal implements IVariantEnum {
                 }
                 return super.getStack(metal, qty);
             }
-        },
-        INGOT("ingot", RailcraftItems.INGOT) {
+        };
+        public static final Form<Metal> INGOT = new Form<Metal>("ingot", RailcraftItems.INGOT) {
             @Nullable
             @Override
             public ItemStack getStack(Metal metal, int qty) {
@@ -152,14 +152,14 @@ public enum Metal implements IVariantEnum {
                 }
                 return super.getStack(metal, qty);
             }
-        },
-        PLATE("plate", RailcraftItems.PLATE) {
+        };
+        public static final Form<Metal> PLATE = new Form<Metal>("plate", RailcraftItems.PLATE) {
             @Override
             public String getOreDictTag(Metal metal) {
                 return null;
             }
-        },
-        BLOCK("block", RailcraftBlocks.GENERIC, blockMap) {
+        };
+        public static final Form<EnumGeneric> BLOCK = new Form<EnumGeneric>("block", RailcraftBlocks.GENERIC, blockMap) {
             @Nullable
             @Override
             public IBlockState getState(Metal metal) {
@@ -183,8 +183,8 @@ public enum Metal implements IVariantEnum {
                 }
                 return super.getStack(metal, qty);
             }
-        },
-        ORE("ore", RailcraftBlocks.ORE_METAL, oreMap) {
+        };
+        public static final Form<EnumOreMetal> ORE = new Form<EnumOreMetal>("ore", RailcraftBlocks.ORE_METAL, oreMap) {
             @Nullable
             @Override
             public IBlockState getState(Metal metal) {
@@ -213,29 +213,22 @@ public enum Metal implements IVariantEnum {
                 }
                 return super.getStack(metal, qty);
             }
-        },
-        POOR_ORE("orePoor", RailcraftBlocks.ORE_METAL_POOR, poorOreMap) {
         };
-        private static final BiMap<Form, IRailcraftRecipeIngredient> containerMap = HashBiMap.create();
-        public static Form[] VALUES = values();
+        public static final Form<EnumOreMetalPoor> POOR_ORE = new Form<>("orePoor", RailcraftBlocks.ORE_METAL_POOR, poorOreMap);
+        private static final BiMap<Form<?>, IRailcraftRecipeIngredientContainer> containerMap = HashBiMap.create();
         private final String orePrefix;
-        protected final IRailcraftObjectContainer container;
-        private final BiMap<Metal, IVariantEnum> variantMap;
+        protected final IRailcraftObjectContainer.IContainerItemVariant<? extends IRailcraftItem.WithVariant<V>, V> container;
+        private final BiMap<Metal, V> variantMap;
 
-        static {
-            for (Form form : Form.VALUES) {
-                containerMap.put(form, form.container);
-            }
-        }
-
-        Form(String orePrefix, IRailcraftObjectContainer container) {
+        Form(String orePrefix, IRailcraftObjectContainer.IContainerItemVariant<? extends IRailcraftItem.WithVariant<V>, V> container) {
             this(orePrefix, container, null);
         }
 
-        Form(String orePrefix, IRailcraftObjectContainer container, @Nullable BiMap<Metal, IVariantEnum> variantMap) {
+        Form(String orePrefix, IRailcraftObjectContainer.IContainerItemVariant<? extends IRailcraftItem.WithVariant<V>, V> container, @Nullable BiMap<Metal, V> variantMap) {
             this.orePrefix = orePrefix;
             this.container = container;
             this.variantMap = variantMap;
+            containerMap.put(this, container);
         }
 
         @Nullable
@@ -244,17 +237,18 @@ public enum Metal implements IVariantEnum {
         }
 
         @Nullable
-        public IVariantEnum getVariantObject(Metal metal) {
+        public V getVariantObject(Metal metal) {
             if (variantMap != null)
                 return variantMap.get(metal);
-            return metal;
+            return null;
         }
 
         @Nullable
+        @SuppressWarnings("unchecked")
         public IBlockState getState(Metal metal) {
-            IVariantEnum variant = getVariantObject(metal);
-            if (variant != null && container instanceof IRailcraftBlockContainer)
-                return ((IRailcraftBlockContainer) container).getState(variant);
+            V variant = getVariantObject(metal);
+            if (variant != null && container instanceof IRailcraftObjectContainer.IContainerBlockVariant)
+                return ((IRailcraftObjectContainer.IContainerBlockVariant<?, ?, V>) (Object) container).getState(variant);
             return null;
         }
 
@@ -265,10 +259,11 @@ public enum Metal implements IVariantEnum {
 
         @Nullable
         public ItemStack getStack(Metal metal, int qty) {
-            IVariantEnum variant = getVariantObject(metal);
+            IRailcraftItem.WithVariant<V> item = container.item();
+            V variant = getVariantObject(metal);
             ItemStack stack = InvTools.emptyStack();
             if (variant != null)
-                stack = container.getStack(qty, variant);
+                stack = item.getStack(qty, item.checkVariant(variant));
             if (InvTools.isEmpty(stack)) {
                 String oreTag = getOreDictTag(metal);
                 if (oreTag != null)

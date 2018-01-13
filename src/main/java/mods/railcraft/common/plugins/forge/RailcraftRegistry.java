@@ -9,7 +9,6 @@
  -----------------------------------------------------------------------------*/
 package mods.railcraft.common.plugins.forge;
 
-import mods.railcraft.api.core.IRailcraftRegistryEntry;
 import mods.railcraft.api.core.IVariantEnum;
 import mods.railcraft.api.core.RailcraftItemStackRegistry;
 import mods.railcraft.common.core.IRailcraftObject;
@@ -61,6 +60,7 @@ public final class RailcraftRegistry {
      * @return The ItemStack or null if no item exists for that tag
      */
     @Nullable
+    @Deprecated // To remove
     public static ItemStack getItem(String tag, int qty) {
         tag = MiscTools.cleanTag(tag);
         return RailcraftItemStackRegistry.getStack(tag, qty).orElse(null);
@@ -90,7 +90,7 @@ public final class RailcraftRegistry {
 //            throw new RuntimeException("ItemStack registrations must be unique!");
 //    }
 
-    public static void register(IRailcraftRegistryEntry<?> object, IVariantEnum variant, ItemStack stack) {
+    public static <V extends Enum<V> & IVariantEnum> void register(IRailcraftObject.WithVariant<?, V> object, V variant, ItemStack stack) {
         assert !InvTools.isEmpty(stack) : "Do not register null or empty items!";
         RailcraftItemStackRegistry.register(object, variant, stack);
     }
@@ -170,6 +170,14 @@ public final class RailcraftRegistry {
         if (item != null)
             GameRegistry.register(item);
         RailcraftItemStackRegistry.register(block, new ItemStack(block));
+        if (Game.DEVELOPMENT_ENVIRONMENT)
+            Game.log(Level.INFO, "Block registered: {0}, {1}", block.getClass(), block.getRegistryName().toString());
+    }
+
+    public static void register(Block block) {
+        if (RailcraftModuleManager.getStage() != RailcraftModuleManager.Stage.CONSTRUCTION && RailcraftModuleManager.getStage() != RailcraftModuleManager.Stage.PRE_INIT)
+            throw new RuntimeException("Blocks must be initialized in PreInit or InitFirst!");
+        GameRegistry.register(block);
         if (Game.DEVELOPMENT_ENVIRONMENT)
             Game.log(Level.INFO, "Block registered: {0}, {1}", block.getClass(), block.getRegistryName().toString());
     }

@@ -10,6 +10,7 @@
 package mods.railcraft.common.blocks.aesthetics.materials;
 
 import mods.railcraft.common.blocks.ItemBlockRailcraft;
+import mods.railcraft.common.blocks.ItemBlockRailcraftSubtyped;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 
@@ -18,7 +19,7 @@ import static mods.railcraft.common.blocks.aesthetics.materials.Materials.MATERI
 /**
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public class ItemMaterial extends ItemBlockRailcraft {
+public class ItemMaterial extends ItemBlockRailcraftSubtyped {
     private final IMaterialBlock matBlock;
 
     public ItemMaterial(Block block) {

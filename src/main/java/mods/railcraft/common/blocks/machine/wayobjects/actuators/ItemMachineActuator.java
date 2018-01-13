@@ -25,19 +25,16 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  *
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public class ItemMachineActuator extends ItemMachine {
-    public ItemMachineActuator(Block block) {
+public class ItemMachineActuator extends ItemMachine<ActuatorVariant> {
+    public ItemMachineActuator(BlockMachineActuator block) {
         super(block);
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     public ModelResourceLocation getModelLocation(IBlockState state) {
-        BlockMachineActuator block = (BlockMachineActuator) RailcraftBlocks.ACTUATOR.block();
-        if (block != null) {
-            ActuatorVariant variant = block.getVariant(state);
-            return new ModelResourceLocation(new ResourceLocation(RailcraftConstants.RESOURCE_DOMAIN, variant.getName()), "inventory");
-        }
-        return super.getModelLocation(state);
+        BlockMachineActuator block = RailcraftBlocks.ACTUATOR.block();
+        ActuatorVariant variant = block.getVariant(state);
+        return new ModelResourceLocation(new ResourceLocation(RailcraftConstants.RESOURCE_DOMAIN, variant.getName()), "inventory");
     }
 }

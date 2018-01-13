@@ -70,12 +70,6 @@ public class BlockLantern extends BlockRailcraft implements IMaterialBlock {
         setHarvestLevel("pickaxe", 0);
     }
 
-    @Nullable
-    @Override
-    public Class<? extends IVariantEnum> getVariantEnum() {
-        return Materials.class;
-    }
-
     @Override
     public void finalizeDefinition() {
         for (Materials mat : Materials.getValidMats()) {
@@ -86,9 +80,9 @@ public class BlockLantern extends BlockRailcraft implements IMaterialBlock {
             ForestryPlugin.addBackpackItem("forestry.builder", getStack(mat));
 
             Object slab;
-            if (RailcraftBlocks.SLAB.isEnabled())
-                slab = RailcraftBlocks.SLAB.getRecipeObject(mat);
-            else
+//            if (RailcraftBlocks.SLAB.isEnabled())
+//                slab = RailcraftBlocks.SLAB.getRecipeObject(mat);
+//            else TODO java messed up
                 slab = mat.getCraftingEquivalent();
 //            if (mat == Materials.SANDSTONE)
 //                slab = new ItemStack(Blocks.STONE_SLAB, 1, 1);
@@ -102,12 +96,6 @@ public class BlockLantern extends BlockRailcraft implements IMaterialBlock {
     @Override
     public String getUnlocalizedName(Materials mat) {
         return "tile.railcraft.lantern." + mat.getLocalizationSuffix();
-    }
-
-    @Nonnull
-    @Override
-    public ItemStack getStack(int qty, @Nullable IVariantEnum variant) {
-        return Materials.getStack(this, qty, variant);
     }
 
     @Nonnull

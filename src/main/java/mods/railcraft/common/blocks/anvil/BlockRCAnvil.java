@@ -34,7 +34,7 @@ import java.util.Locale;
 /**
  * @author CovertJaguar <http://www.railcraft.info/>
  */
-public class BlockRCAnvil extends BlockAnvil implements IRailcraftBlock {
+public class BlockRCAnvil extends BlockAnvil implements IRailcraftBlock.WithVariant<BlockRCAnvil.DamageState> {
 
     public BlockRCAnvil() {
         setCreativeTab(CreativePlugin.RAILCRAFT_TAB);
@@ -48,30 +48,25 @@ public class BlockRCAnvil extends BlockAnvil implements IRailcraftBlock {
         return this;
     }
 
-    @Nullable
     @Override
-    public Class<? extends IVariantEnum> getVariantEnum() {
+    public Class<DamageState> getVariantEnum() {
         return DamageState.class;
     }
 
-    @Nullable
     @Override
-    public IVariantEnum[] getVariants() {
+    public DamageState[] getVariants() {
         return DamageState.VALUES;
     }
 
     @Override
-    public IBlockState getState(@Nullable IVariantEnum variant) {
+    public IBlockState getState(DamageState variant) {
         IBlockState state = getDefaultState();
-        if (variant != null) {
-            checkVariant(variant);
-            state = state.withProperty(DAMAGE, variant.ordinal());
-        }
+        state = state.withProperty(DAMAGE, variant.ordinal());
         return state;
     }
 
     @Override
-    public Object getRecipeObject(@Nullable IVariantEnum variant) {
+    public Object getRecipeObject(DamageState variant) {
         return this;
     }
 

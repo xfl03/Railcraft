@@ -11,6 +11,7 @@ package mods.railcraft.common.blocks.aesthetics.post;
 
 import mods.railcraft.api.core.IPostConnection;
 import mods.railcraft.api.core.IVariantEnum;
+import mods.railcraft.common.blocks.IRailcraftBlock;
 import mods.railcraft.common.blocks.RailcraftBlocks;
 import mods.railcraft.common.plugins.color.EnumColor;
 import mods.railcraft.common.plugins.forestry.ForestryPlugin;
@@ -41,7 +42,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class BlockPost extends BlockPostBase implements IPostConnection {
+public class BlockPost extends BlockPostBase implements IPostConnection, IRailcraftBlock.WithVariant<EnumPost> {
 
     public static final PropertyEnum<EnumPost> VARIANT = PropertyEnum.create("variant", EnumPost.class);
 
@@ -72,19 +73,15 @@ public class BlockPost extends BlockPostBase implements IPostConnection {
         setDefaultState(blockState.getBaseState().withProperty(VARIANT, EnumPost.WOOD));
     }
 
-    @Nullable
     @Override
-    public Class<? extends IVariantEnum> getVariantEnum() {
+    public Class<? extends EnumPost> getVariantEnum() {
         return EnumPost.class;
     }
 
     @Override
-    public IBlockState getState(@Nullable IVariantEnum variant) {
+    public IBlockState getState(EnumPost variant) {
         IBlockState state = getDefaultState();
-        if (variant != null) {
-            checkVariant(variant);
-            state = state.withProperty(VARIANT, (EnumPost) variant);
-        }
+        state = state.withProperty(VARIANT, variant);
         return state;
     }
 
@@ -93,9 +90,9 @@ public class BlockPost extends BlockPostBase implements IPostConnection {
         GameRegistry.registerTileEntity(TilePostEmblem.class, "RCPostEmblemTile");
 
         for (EnumPost post : EnumPost.VALUES) {
-            ItemStack stack = post.getStack();
-            if (stack != null)
-                RailcraftRegistry.register(this, post, stack);
+            if (post.isEnabled()) {
+                RailcraftRegistry.register(this, post, post.getStack());
+            }
         }
 
 //            HarvestPlugin.setStateHarvestLevel(block, "crowbar", 0);

@@ -10,7 +10,7 @@
 package mods.railcraft.common.blocks.aesthetics.post;
 
 import mods.railcraft.api.core.IPostConnection;
-import mods.railcraft.api.core.IVariantEnum;
+import mods.railcraft.common.blocks.IRailcraftBlock;
 import mods.railcraft.common.plugins.color.ColorPlugin;
 import mods.railcraft.common.plugins.color.EnumColor;
 import mods.railcraft.common.plugins.forestry.ForestryPlugin;
@@ -42,7 +42,7 @@ import java.util.List;
 /**
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public abstract class BlockPostMetalBase extends BlockPostBase implements ColorPlugin.IColoredBlock {
+public abstract class BlockPostMetalBase extends BlockPostBase implements ColorPlugin.IColoredBlock, IRailcraftBlock.WithVariant<EnumColor> {
 
     public static final PropertyEnum<EnumColor> COLOR = PropertyEnum.create("color", EnumColor.class);
 
@@ -57,9 +57,8 @@ public abstract class BlockPostMetalBase extends BlockPostBase implements ColorP
         ForestryPlugin.addBackpackItem("forestry.builder", this);
 
         for (EnumColor color : EnumColor.VALUES) {
-            ItemStack stack = getStack(1, color);
-            if (stack != null)
-                RailcraftRegistry.register(this, color, stack);
+            if (color.isEnabled())
+                RailcraftRegistry.register(this, color, getStack(1, color));
         }
     }
 
@@ -99,12 +98,12 @@ public abstract class BlockPostMetalBase extends BlockPostBase implements ColorP
 
     @Nullable
     @Override
-    public Class<? extends IVariantEnum> getVariantEnum() {
+    public Class<EnumColor> getVariantEnum() {
         return EnumColor.class;
     }
 
     @Override
-    public IBlockState getState(@Nullable IVariantEnum variant) {
+    public IBlockState getState(EnumColor variant) {
         IBlockState state = getDefaultState();
         if (variant != null) {
             checkVariant(variant);
@@ -123,7 +122,7 @@ public abstract class BlockPostMetalBase extends BlockPostBase implements ColorP
     }
 
     @Override
-    public IBlockState getItemRenderState(@Nullable IVariantEnum variant) {
+    public IBlockState getItemRenderState(EnumColor variant) {
         IBlockState state = getDefaultState();
         state = state.withProperty(EAST, IPostConnection.ConnectStyle.TWO_THIN);
         state = state.withProperty(WEST, IPostConnection.ConnectStyle.TWO_THIN);

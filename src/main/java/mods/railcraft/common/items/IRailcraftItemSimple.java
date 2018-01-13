@@ -26,14 +26,18 @@ public interface IRailcraftItemSimple extends IRailcraftItem {
     @Override
     @SideOnly(Side.CLIENT)
     default void initializeClient() {
-        IVariantEnum[] variants = getVariants();
-        if (variants != null) {
+        ModelManager.registerItemModel(getObject(), 0);
+    }
+
+    interface WithVariant<V extends Enum<V> & IVariantEnum> extends IRailcraftItemSimple, IRailcraftItem.WithVariant<V> {
+        @Override
+        @SideOnly(Side.CLIENT)
+        default void initializeClient() {
+            V[] variants = getVariants();
             for (int i = 0, variantsLength = variants.length; i < variantsLength; i++) {
-                IVariantEnum variant = variants[i];
+                V variant = variants[i];
                 ModelManager.registerItemModel(getObject(), i, getResourcePath() + RailcraftConstants.SEPERATOR + variant.getResourcePathSuffix());
             }
-        } else {
-            ModelManager.registerItemModel(getObject(), 0);
         }
     }
 

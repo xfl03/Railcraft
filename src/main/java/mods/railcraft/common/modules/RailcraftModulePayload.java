@@ -15,12 +15,13 @@ import mods.railcraft.common.core.IRailcraftObjectContainer;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 
 public abstract class RailcraftModulePayload implements IRailcraftModule {
 
     private static final ModuleEventHandler BLANK_EVENT_HANDLER = new ModuleEventHandler();
-    private final LinkedHashSet<IRailcraftObjectContainer<?>> objectContainers = new LinkedHashSet<>();
+    private final LinkedHashSet<IRailcraftObjectContainer> objectContainers = new LinkedHashSet<>();
     private final ModuleEventHandler baseEventHandler = new BaseModuleEventHandler(this);
     private ModuleEventHandler enabledEventHandler = BLANK_EVENT_HANDLER;
     private ModuleEventHandler disabledEventHandler = BLANK_EVENT_HANDLER;
@@ -33,13 +34,13 @@ public abstract class RailcraftModulePayload implements IRailcraftModule {
         this.disabledEventHandler = disabledEventHandler;
     }
 
-    public final void add(IRailcraftObjectContainer<?>... objects) {
+    public final void add(IRailcraftObjectContainer... objects) {
         if (RailcraftModuleManager.getStage() != RailcraftModuleManager.Stage.CONSTRUCTION)
             throw new RuntimeException("You can only associate Railcraft Objects with a Module during the Construction phase!");
         objectContainers.addAll(Arrays.asList(objects));
     }
 
-    public final boolean isDefiningObject(IRailcraftObjectContainer<?> object) {
+    public final boolean isDefiningObject(IRailcraftObjectContainer object) {
         return objectContainers.contains(object);
     }
 
@@ -53,6 +54,10 @@ public abstract class RailcraftModulePayload implements IRailcraftModule {
 
     @Override
     public void checkPrerequisites() throws MissingPrerequisiteException {
+    }
+
+    Collection<IRailcraftObjectContainer> getObjectContainers() {
+        return objectContainers;
     }
 
     @Override
@@ -74,7 +79,7 @@ public abstract class RailcraftModulePayload implements IRailcraftModule {
 
         @Override
         public void preInit() {
-            objectContainers.forEach(c -> c.addedBy(owner.getClass()));
+            objectContainers.forEach(c -> c.requiresModule(owner.getClass()));
             //Must mark all items as added first because recipe registry may register items in random order
             objectContainers.forEach(IRailcraftObjectContainer::register);
             enabledEventHandler.preInit();

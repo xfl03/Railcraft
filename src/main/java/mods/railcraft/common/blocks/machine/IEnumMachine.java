@@ -10,13 +10,13 @@
 package mods.railcraft.common.blocks.machine;
 
 import mods.railcraft.api.core.IRailcraftModule;
-import mods.railcraft.common.blocks.IVariantEnumBlock;
+import mods.railcraft.common.blocks.IVariantEnumBlockSpecific;
 
 /**
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public interface IEnumMachine<M extends Enum<M> & IEnumMachine<M>> extends IVariantEnumBlock<M> {
-    class Definition extends IVariantEnumBlock.Definition {
+public interface IEnumMachine<M extends Enum<M> & IEnumMachine<M>> extends IVariantEnumBlockSpecific<M> {
+    class Definition extends IVariantEnumBlockSpecific.Definition {
         public final Class<? extends TileMachineBase> tile;
         public boolean passesLight;
 

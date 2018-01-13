@@ -10,7 +10,6 @@
 
 package mods.railcraft.common.blocks;
 
-import mods.railcraft.api.core.IVariantEnum;
 import mods.railcraft.common.blocks.machine.RailcraftBlockMetadata;
 import mods.railcraft.common.plugins.forge.CreativePlugin;
 import mods.railcraft.common.util.collections.ArrayTools;
@@ -37,7 +36,7 @@ import java.util.List;
  *
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public abstract class BlockContainerRailcraftSubtyped<V extends Enum<V> & IVariantEnumBlock<V>> extends BlockContainerRailcraft implements ISubtypedBlock<V> {
+public abstract class BlockContainerRailcraftSubtyped<V extends Enum<V> & IVariantEnumBlockSpecific<V>> extends BlockContainerRailcraft implements ISubtypedBlock<V> {
     private RailcraftBlockMetadata annotation;
     private Class<V> variantClass;
     private V[] variantValues;
@@ -65,15 +64,6 @@ public abstract class BlockContainerRailcraftSubtyped<V extends Enum<V> & IVaria
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, getVariantProperty());
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public IBlockState getState(@Nullable IVariantEnum variant) {
-        if (variant == null)
-            return getDefaultState();
-        checkVariant(variant);
-        return getDefaultState().withProperty(getVariantProperty(), (V) variant);
     }
 
     @Override
@@ -117,12 +107,8 @@ public abstract class BlockContainerRailcraftSubtyped<V extends Enum<V> & IVaria
     @Override
     public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list) {
         V[] variants = getVariants();
-        if (variants != null) {
-            for (V variant : variants) {
-                CreativePlugin.addToList(list, getStack(variant));
-            }
-        } else {
-            CreativePlugin.addToList(list, getStack(null));
+        for (V variant : variants) {
+            CreativePlugin.addToList(list, getStack(variant));
         }
     }
 

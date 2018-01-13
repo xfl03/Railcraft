@@ -136,7 +136,7 @@ public class BlockMachine<V extends Enum<V> & IEnumMachine<V>> extends BlockCont
     @Override
     public EnumFacing[] getValidRotations(World world, BlockPos pos) {
         return TileManager.forTile(this::getTileClass, WorldPlugin.getBlockState(world, pos), world, pos)
-                .retrieve(ITileRotate.class, ITileRotate::getValidRotations).orElse(null);
+                .retrieve(ITileRotate.class, ITileRotate::getValidRotations).orElseGet(() -> new EnumFacing[0]);
     }
 
     @SideOnly(Side.CLIENT)

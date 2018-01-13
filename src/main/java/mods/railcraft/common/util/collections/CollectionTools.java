@@ -11,7 +11,7 @@
 package mods.railcraft.common.util.collections;
 
 import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableBiMap;
 
 import java.util.*;
 
@@ -26,23 +26,28 @@ public class CollectionTools {
 
     @SafeVarargs
     public static <T> BiMap<Integer, T> createIndexedLookupTable(T... elements) {
-        return createIndexedLookupTable(Arrays.asList(elements));
+        ImmutableBiMap.Builder<Integer, T> builder = ImmutableBiMap.builder();
+        for (int i = 0; i <= elements.length; i++) {
+            builder.put(i, elements[i]);
+        }
+        return builder.build();
     }
 
-    public static <T> BiMap<Integer, T> createIndexedLookupTable(List<T> elements) {
-        BiMap<Integer, T> biMap = HashBiMap.create();
-        for (int i = 0; i < elements.size(); i++) {
-            biMap.put(i, elements.get(i));
+    public static <T> BiMap<Integer, T> createIndexedLookupTable(Iterable<T> elements) {
+        ImmutableBiMap.Builder<Integer, T> builder = ImmutableBiMap.builder();
+        Iterator<T> itr = elements.iterator();
+        for (int i = 0; itr.hasNext(); i++) {
+            builder.put(i, itr.next());
         }
-        return biMap;
+        return builder.build();
     }
 
     public static <V> Map<StackKey, V> createItemStackMap() {
-        return new HashMap<StackKey, V>();
+        return new HashMap<>();
     }
 
     public static Set<StackKey> createItemStackSet() {
-        return new HashSet<StackKey>();
+        return new HashSet<>();
     }
 
     public static <T> boolean intersects(Collection<T> collection, T[] array) {

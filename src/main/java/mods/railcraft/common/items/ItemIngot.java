@@ -9,8 +9,6 @@
  -----------------------------------------------------------------------------*/
 package mods.railcraft.common.items;
 
-import mods.railcraft.common.util.collections.CollectionTools;
-
 import static mods.railcraft.common.items.Metal.*;
 
 /**
@@ -19,7 +17,7 @@ import static mods.railcraft.common.items.Metal.*;
 public class ItemIngot extends ItemMetal {
 
     public ItemIngot() {
-        super(Form.INGOT, true, true, CollectionTools.createIndexedLookupTable(STEEL, COPPER, TIN, LEAD, SILVER, BRONZE, NICKEL, INVAR, ZINC, BRASS));
+        super(Form.INGOT, true, true, STEEL, COPPER, TIN, LEAD, SILVER, BRONZE, NICKEL, INVAR, ZINC, BRASS);
         setSmeltingExperience(1);
     }
 

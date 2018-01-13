@@ -9,13 +9,12 @@
  -----------------------------------------------------------------------------*/
 package mods.railcraft.common.blocks.machine.single;
 
-import mods.railcraft.common.blocks.machine.beta.EnumMachineBeta;
 import mods.railcraft.common.gui.EnumGui;
 import mods.railcraft.common.items.Metal;
+import mods.railcraft.common.util.inventory.InvTools;
 import mods.railcraft.common.util.inventory.filters.StackFilters;
 import mods.railcraft.common.util.inventory.iterators.IExtInvSlot;
 import mods.railcraft.common.util.inventory.manipulators.InventoryManipulator;
-import mods.railcraft.common.util.inventory.InvTools;
 import mods.railcraft.common.util.misc.Game;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;

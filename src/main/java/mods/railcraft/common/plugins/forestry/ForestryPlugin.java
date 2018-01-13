@@ -113,7 +113,7 @@ public class ForestryPlugin {
     }
 
     @Nullable
-    public Item getBackpack(String backpackId, String type) {
+    public ItemBackpackWrapper getBackpack(String backpackId, String type) {
         return null;
     }
 
@@ -276,7 +276,7 @@ public class ForestryPlugin {
         @Optional.Method(modid = ForestryPlugin.FORESTRY_ID)
         @Nullable
         @Override
-        public Item getBackpack(String backpackId, String type) {
+        public ItemBackpackWrapper getBackpack(String backpackId, String type) {
             IBackpackInterface backMan = forestry.api.storage.BackpackManager.backpackInterface;
             if (backMan == null)
                 return null;

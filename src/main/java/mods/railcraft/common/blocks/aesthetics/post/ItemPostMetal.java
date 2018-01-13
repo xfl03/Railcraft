@@ -21,9 +21,9 @@ import net.minecraftforge.oredict.OreDictionary;
 /**
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public class ItemPostMetal extends ItemBlockRailcraftSubtyped {
+public class ItemPostMetal extends ItemBlockRailcraftSubtyped<EnumColor> {
 
-    public ItemPostMetal(Block block) {
+    public ItemPostMetal(BlockPostMetalBase block) {
         super(block);
     }
 

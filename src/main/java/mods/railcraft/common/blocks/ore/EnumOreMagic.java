@@ -10,14 +10,14 @@
 package mods.railcraft.common.blocks.ore;
 
 import mods.railcraft.common.blocks.IRailcraftBlockContainer;
-import mods.railcraft.common.blocks.IVariantEnumBlock;
+import mods.railcraft.common.blocks.IVariantEnumBlockSpecific;
 import mods.railcraft.common.blocks.RailcraftBlocks;
 import mods.railcraft.common.modules.ModuleWorld;
 
 /**
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public enum EnumOreMagic implements IVariantEnumBlock<EnumOreMagic> {
+public enum EnumOreMagic implements IVariantEnumBlockSpecific<EnumOreMagic> {
 
     FIRESTONE("firestone");
     public static final EnumOreMagic[] VALUES = values();

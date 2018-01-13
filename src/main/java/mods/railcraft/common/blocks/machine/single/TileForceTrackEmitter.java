@@ -12,14 +12,17 @@ package mods.railcraft.common.blocks.machine.single;
 import mods.railcraft.api.tracks.ITrackKitInstance;
 import mods.railcraft.api.tracks.ITrackKitLockdown;
 import mods.railcraft.api.tracks.TrackToolsAPI;
+import mods.railcraft.common.blocks.ISmartTile;
 import mods.railcraft.common.blocks.RailcraftBlocks;
-import mods.railcraft.common.blocks.machine.TileMachineBase;
-import mods.railcraft.common.blocks.machine.epsilon.EnumMachineEpsilon;
+import mods.railcraft.common.blocks.RailcraftTickingTileEntity;
+import mods.railcraft.common.blocks.charge.ChargeManager;
+import mods.railcraft.common.blocks.charge.ChargeNetwork;
 import mods.railcraft.common.blocks.machine.interfaces.ITileRotate;
 import mods.railcraft.common.blocks.tracks.TrackTools;
 import mods.railcraft.common.blocks.tracks.force.BlockTrackForce;
 import mods.railcraft.common.blocks.tracks.force.TileTrackForce;
 import mods.railcraft.common.blocks.tracks.outfitted.TileTrackOutfitted;
+import mods.railcraft.common.gui.EnumGui;
 import mods.railcraft.common.plugins.forge.PowerPlugin;
 import mods.railcraft.common.plugins.forge.WorldPlugin;
 import mods.railcraft.common.util.effects.EffectManager;
@@ -43,14 +46,13 @@ import java.io.IOException;
  * @author CovertJaguar <http://www.railcraft.info>
  */
 //TODO: migrate to new charge API
-public class TileForceTrackEmitter extends TileMachineBase implements ITileRotate {
+public class TileForceTrackEmitter extends RailcraftTickingTileEntity implements ITileRotate, ISmartTile {
 
     private static final double BASE_DRAW = 22;
     private static final double CHARGE_PER_TRACK = 2;
     private static final int TICKS_PER_ACTION = 4;
     private static final int TICKS_PER_REFRESH = 64;
     public static final int MAX_TRACKS = 64;
-    //    private final ChargeHandler chargeHandler = new ChargeHandler(this, IChargeBlock.ConnectType.BLOCK, 0.0);
     private boolean powered;
     private EnumFacing facing = EnumFacing.NORTH;
     private int numTracks;
@@ -116,7 +118,7 @@ public class TileForceTrackEmitter extends TileMachineBase implements ITileRotat
 
     @Override
     public void onBlockRemoval() {
-        super.onBlockRemoval();
+        ISmartTile.super.onBlockRemoval();
         while (numTracks > 0) {
             int x = numTracks * facing.getFrontOffsetX();
             int z = numTracks * facing.getFrontOffsetZ();
@@ -134,7 +136,9 @@ public class TileForceTrackEmitter extends TileMachineBase implements ITileRotat
         double draw = getDraw(numTracks);
 
 //TODO: migrate to new charge API
-        if (powered /*&& chargeHandler.removeCharge(draw) >= draw*/)
+        ChargeNetwork.ChargeNode node = ChargeManager.getNetwork(worldObj).getNode(pos);
+        if (powered && node.canUseCharge(draw)/*&& chargeHandler.removeCharge(draw) >= draw*/) {
+            node.useCharge(draw);
             switch (state) {
                 case RETRACTED:
                 case RETRACTING:
@@ -146,7 +150,7 @@ public class TileForceTrackEmitter extends TileMachineBase implements ITileRotat
                         state = State.EXTENDING;
                     break;
             }
-        else if (state == State.EXTENDED || state == State.EXTENDING || state == State.HALTED)
+        } else if (state == State.EXTENDED || state == State.EXTENDING || state == State.HALTED)
             state = State.RETRACTING;
 
         state.doAction(this);
@@ -226,7 +230,7 @@ public class TileForceTrackEmitter extends TileMachineBase implements ITileRotat
     }
 
     public boolean hasPowerToExtend() {
-        return true;
+        return ChargeManager.getNetwork(worldObj).getNode(pos).canUseCharge(getDraw(numTracks + 1));
 //        return chargeHandler.getCharge() >= getDraw(numTracks + 1);
     }
 
@@ -243,14 +247,10 @@ public class TileForceTrackEmitter extends TileMachineBase implements ITileRotat
 //        return chargeHandler;
 //    }
 
-    //    @Override
-    public TileEntity getTile() {
-        return this;
-    }
-
+    @Nullable
     @Override
-    public EnumMachineEpsilon getMachineType() {
-        return EnumMachineEpsilon.FORCE_TRACK_EMITTER;
+    public EnumGui getGui() {
+        return null; // No GUI
     }
 
     @Override
@@ -320,7 +320,13 @@ public class TileForceTrackEmitter extends TileMachineBase implements ITileRotat
             markBlockForUpdate();
     }
 
+    @Override
     public EnumFacing getFacing() {
         return facing;
+    }
+
+    @Override
+    public IBlockState getActualState(IBlockState base) {
+        return base.withProperty(BlockForceTrackEmitter.FACING, facing);
     }
 }

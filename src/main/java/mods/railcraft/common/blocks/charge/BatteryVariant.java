@@ -11,7 +11,7 @@ package mods.railcraft.common.blocks.charge;
 
 import mods.railcraft.api.core.IRailcraftModule;
 import mods.railcraft.common.blocks.IRailcraftBlockContainer;
-import mods.railcraft.common.blocks.IVariantEnumBlock;
+import mods.railcraft.common.blocks.IVariantEnumBlockSpecific;
 import mods.railcraft.common.blocks.RailcraftBlocks;
 import mods.railcraft.common.modules.ModuleCharge;
 
@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * @author CovertJaguar
  */
-public enum BatteryVariant implements IVariantEnumBlock<BatteryVariant> {
+public enum BatteryVariant implements IVariantEnumBlockSpecific<BatteryVariant> {
 
     NICKEL_IRON(ModuleCharge.class, "nickel_iron", 100_000, 32.0, 0.3, 0.8),
     NICKEL_ZINC(ModuleCharge.class, "nickel_zinc", 150_000, 16.0, 0.2, 0.7),;
@@ -35,7 +35,7 @@ public enum BatteryVariant implements IVariantEnumBlock<BatteryVariant> {
         creativeList.add(NICKEL_IRON);
     }
 
-    private final IVariantEnumBlock.Definition def;
+    private final IVariantEnumBlockSpecific.Definition def;
 
     BatteryVariant(Class<? extends IRailcraftModule> module, String tag, final double capacity, final double maxDraw, final double loss, final double efficiency) {
         this.def = new Definition(tag, module);
@@ -69,7 +69,7 @@ public enum BatteryVariant implements IVariantEnumBlock<BatteryVariant> {
     }
 
     @Override
-    public IRailcraftBlockContainer getContainer() {
+    public IRailcraftBlockContainer.VariantContainer<?, ?, BatteryVariant> getContainer() {
         return RailcraftBlocks.CHARGE_BATTERY;
     }
 }

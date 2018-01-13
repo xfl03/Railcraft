@@ -76,7 +76,6 @@ public abstract class RailcraftTileEntity extends TileEntity implements INetwork
         return tileCache;
     }
 
-    @Nullable
     @Override
     public final SPacketUpdateTileEntity getUpdatePacket() {
         return new SPacketUpdateTileEntity(getPos(), 0, getUpdateTag());
@@ -244,6 +243,7 @@ public abstract class RailcraftTileEntity extends TileEntity implements INetwork
         return worldObj;
     }
 
+    @Deprecated // To be removed
     public short getId() {
         return -1;
     }

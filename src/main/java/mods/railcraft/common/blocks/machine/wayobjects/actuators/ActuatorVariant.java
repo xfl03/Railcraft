@@ -73,7 +73,7 @@ public enum ActuatorVariant implements IEnumMachine<ActuatorVariant> {
     }
 
     @Override
-    public IRailcraftBlockContainer getContainer() {
+    public IRailcraftBlockContainer.VariantContainer<?, ?, ActuatorVariant> getContainer() {
         return RailcraftBlocks.ACTUATOR;
     }
 }

@@ -10,7 +10,7 @@
 package mods.railcraft.common.blocks.ore;
 
 import mods.railcraft.common.blocks.IRailcraftBlockContainer;
-import mods.railcraft.common.blocks.IVariantEnumBlock;
+import mods.railcraft.common.blocks.IVariantEnumBlockSpecific;
 import mods.railcraft.common.blocks.RailcraftBlocks;
 import mods.railcraft.common.items.Metal;
 import mods.railcraft.common.modules.ModuleWorld;
@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 /**
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public enum EnumOreMetal implements IVariantEnumBlock<EnumOreMetal> {
+public enum EnumOreMetal implements IVariantEnumBlockSpecific<EnumOreMetal> {
 
     COPPER(Metal.COPPER),
     TIN(Metal.TIN),

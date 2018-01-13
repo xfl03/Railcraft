@@ -10,7 +10,7 @@
 package mods.railcraft.common.blocks.aesthetics.post;
 
 import mods.railcraft.common.blocks.IRailcraftBlockContainer;
-import mods.railcraft.common.blocks.IVariantEnumBlock;
+import mods.railcraft.common.blocks.IVariantEnumBlockSpecific;
 import mods.railcraft.common.blocks.RailcraftBlocks;
 import mods.railcraft.common.modules.ModuleStructures;
 import net.minecraft.block.material.MapColor;
@@ -20,7 +20,7 @@ import java.util.Locale;
 /**
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public enum EnumPost implements IVariantEnumBlock<EnumPost> {
+public enum EnumPost implements IVariantEnumBlockSpecific<EnumPost> {
 
     WOOD(MapColor.BROWN),
     STONE(MapColor.STONE),
@@ -63,7 +63,7 @@ public enum EnumPost implements IVariantEnumBlock<EnumPost> {
     }
 
     @Override
-    public IRailcraftBlockContainer getContainer() {
+    public IRailcraftBlockContainer.VariantContainer<?, ?, EnumPost> getContainer() {
         return RailcraftBlocks.POST;
     }
 

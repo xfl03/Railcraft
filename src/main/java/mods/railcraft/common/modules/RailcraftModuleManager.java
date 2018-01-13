@@ -21,13 +21,16 @@ import mods.railcraft.common.util.misc.Game;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
+import net.minecraftforge.fml.common.toposort.TopologicalSort;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+//TODO instance out this class
 public class RailcraftModuleManager {
 
     private static final String MODULE_CONFIG_FILE_NAME = "modules.cfg";
@@ -37,9 +40,27 @@ public class RailcraftModuleManager {
     private static final LinkedHashSet<Class<? extends IRailcraftModule>> enabledModules = new LinkedHashSet<>();
     private static final List<Class<? extends IRailcraftModule>> loadOrder = new LinkedList<>();
     private static Stage stage = Stage.LOADING;
+    private static Set<IRailcraftObjectContainer> enabledContainers;
     public static Configuration config;
 
     private RailcraftModuleManager() {
+    }
+
+    public static Set<IRailcraftObjectContainer> getEnabledContainers() {
+        if (stage.compareTo(Stage.INIT) < 0)
+            throw new IllegalStateException("Access all containers too early!");
+        if (enabledContainers == null)
+            prepareContainers();
+        return enabledContainers;
+    }
+
+    private static void prepareContainers() {
+        enabledContainers = classToInstanceMapping.values().stream()
+                .filter(module -> module instanceof RailcraftModulePayload)
+                .map(module -> (RailcraftModulePayload) module)
+                .map(RailcraftModulePayload::getObjectContainers)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
     }
 
     public static void loadModules(ASMDataTable asmDataTable) {
@@ -101,7 +122,7 @@ public class RailcraftModuleManager {
         List<Class<? extends IRailcraftModule>> toEnable = Lists.newArrayList();
         TreeSet<Class<? extends IRailcraftModule>> toDisable = new TreeSet<>(Comparator.comparing(RailcraftModuleManager::getModuleName));
         for (Map.Entry<Class<? extends IRailcraftModule>, IRailcraftModule> entry : classToInstanceMapping.entrySet()) {
-            if (ModuleCore.class.equals(entry.getKey()))
+            if (ModuleCore.class == entry.getKey())
                 continue;
             IRailcraftModule module = entry.getValue();
             String moduleName = getModuleName(module);
@@ -118,51 +139,66 @@ public class RailcraftModuleManager {
             }
             toEnable.add(module.getClass());
         }
-
-        // Determine which modules are lacking dependencies
-        TreeSet<Class<? extends IRailcraftModule>> toLoad = new TreeSet<>(Comparator.comparing(RailcraftModuleManager::getModuleName));
-        toLoad.add(ModuleCore.class);
-        boolean changed;
-        do {
-            changed = false;
-            Iterator<Class<? extends IRailcraftModule>> it = toEnable.iterator();
-            while (it.hasNext()) {
-                Class<? extends IRailcraftModule> moduleClass = it.next();
-                if (toLoad.containsAll(getDependencies(moduleClass))) {
-                    it.remove();
-                    toLoad.add(moduleClass);
-                    changed = true;
-                    break;
-                }
-            }
-        } while (changed);
-
-        // Tell the user which modules are missing dependencies
-        for (Class<? extends IRailcraftModule> moduleClass : toEnable) {
-            Game.log(Level.WARN, "Module is missing dependencies, disabling: {0} -> {1}", getDependencies(moduleClass), getModuleName(moduleClass));
+        // New code for determination
+        TopologicalSort.DirectedGraph<Class<? extends IRailcraftModule>> graph = new TopologicalSort.DirectedGraph<>();
+        for (Class<? extends IRailcraftModule> clazz : toEnable) {
+            graph.addNode(clazz);
         }
 
+        for (Class<? extends IRailcraftModule> now : toEnable) {
+            for (Class<? extends IRailcraftModule> pre : getDependencies(now)) {
+                graph.addEdge(pre, now);
+            }
+        }
+
+        // Determine which modules are lacking dependencies
+//        TreeSet<Class<? extends IRailcraftModule>> toLoad = new TreeSet<>(Comparator.comparing(RailcraftModuleManager::getModuleName));
+//        toLoad.add(ModuleCore.class);
+//        boolean changed;
+//        do {
+//            changed = false;
+//            Iterator<Class<? extends IRailcraftModule>> it = toEnable.iterator();
+//            while (it.hasNext()) {
+//                Class<? extends IRailcraftModule> moduleClass = it.next();
+//                if (toLoad.containsAll(getDependencies(moduleClass))) {
+//                    it.remove();
+//                    toLoad.add(moduleClass);
+//                    changed = true;
+//                    break;
+//                }
+//            }
+//        } while (changed);
+
+        List<Class<? extends IRailcraftModule>> order = TopologicalSort.topologicalSort(graph);
+
+        // Tell the user which modules are missing dependencies
+//        for (Class<? extends IRailcraftModule> moduleClass : toEnable) {
+//            Game.log(Level.WARN, "Module is missing dependencies, disabling: {0} -> {1}", getDependencies(moduleClass), getModuleName(moduleClass));
+//        }
+
         // Add modules missing dependencies to the disabled list
-        toDisable.addAll(toEnable);
+//        toDisable.addAll(toEnable);
 
         // Build and sort loadOrder
-        toLoad.remove(ModuleCore.class);
-        loadOrder.add(ModuleCore.class);
-        do {
-            changed = false;
-            Iterator<Class<? extends IRailcraftModule>> it = toLoad.iterator();
-            while (it.hasNext()) {
-                Class<? extends IRailcraftModule> moduleClass = it.next();
-                if (loadOrder.containsAll(getAllDependencies(moduleClass, toLoad))) {
-                    it.remove();
-                    loadOrder.add(moduleClass);
-                    changed = true;
-                    break;
-                }
-            }
-        } while (changed);
+//        toLoad.remove(ModuleCore.class);
+//        loadOrder.add(ModuleCore.class);
+//        do {
+//            changed = false;
+//            Iterator<Class<? extends IRailcraftModule>> it = toLoad.iterator();
+//            while (it.hasNext()) {
+//                Class<? extends IRailcraftModule> moduleClass = it.next();
+//                if (loadOrder.containsAll(getAllDependencies(moduleClass, toLoad))) {
+//                    it.remove();
+//                    loadOrder.add(moduleClass);
+//                    changed = true;
+//                    break;
+//                }
+//            }
+//        } while (changed);
 
         // Add the valid modules to the enabled list in the load order
+        loadOrder.clear();
+        loadOrder.addAll(order);
         enabledModules.addAll(loadOrder);
 
         // Add the disabled modules to the load order
@@ -252,7 +288,7 @@ public class RailcraftModuleManager {
         return enabledModules.contains(nameToClassMapping.get(moduleName));
     }
 
-    public static boolean isObjectDefined(IRailcraftObjectContainer<?> objectContainer) {
+    public static boolean isObjectDefined(IRailcraftObjectContainer objectContainer) {
         switch (stage) {
             case LOADING:
             case DEPENDENCY_CHECKING:

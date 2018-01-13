@@ -10,7 +10,7 @@
 package mods.railcraft.common.plugins.forge;
 
 import com.google.common.collect.Lists;
-import mods.railcraft.api.core.IRailcraftRecipeIngredient;
+import mods.railcraft.api.core.IRailcraftRecipeIngredientContainer;
 import mods.railcraft.api.core.IVariantEnum;
 import mods.railcraft.common.modules.RailcraftModuleManager;
 import mods.railcraft.common.util.crafting.InvalidRecipeException;
@@ -69,13 +69,13 @@ public final class CraftingPlugin {
         List<Object> recipeList = Lists.newArrayList(recipeArray);
         for (int i = 0; i < recipeList.size(); i++) {
             Object obj = recipeList.get(i);
-            if (obj instanceof IRailcraftRecipeIngredient) {
+            if (obj instanceof IRailcraftRecipeIngredientContainer) {
                 Object obj2 = i + 1 < recipeList.size() ? recipeList.get(i + 1) : null;
                 if (obj2 instanceof IVariantEnum) {
-                    recipeList.set(i, ((IRailcraftRecipeIngredient) obj).getRecipeObject((IVariantEnum) obj2));
+                    recipeList.set(i, ((IRailcraftRecipeIngredientContainer) obj).getRecipeObject((IVariantEnum) obj2));
                     recipeList.remove(i + 1);
                 } else {
-                    recipeList.set(i, ((IRailcraftRecipeIngredient) obj).getRecipeObject());
+                    recipeList.set(i, ((IRailcraftRecipeIngredientContainer) obj).getRecipeObject());
                 }
                 if (recipeList.get(i) == null)
                     throw new MissingIngredientException(recipeType, result);
@@ -243,7 +243,7 @@ public final class CraftingPlugin {
     }
 
     @Nullable
-    public static ItemStack getIngredientStack(IRailcraftRecipeIngredient ingredient, int qty) {
+    public static ItemStack getIngredientStack(IRailcraftRecipeIngredientContainer ingredient, int qty) {
         Object object = ingredient.getRecipeObject();
         if (object instanceof ItemStack) {
             ItemStack stack = ((ItemStack) object).copy();

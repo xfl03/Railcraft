@@ -183,10 +183,6 @@ public class BlockTrackOutfitted extends BlockTrackTile implements IPostConnecti
     }
 
     @Override
-    public void registerItemModel(ItemStack stack, @Nullable IVariantEnum variant) {
-    }
-
-    @Override
     public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list) {
         for (Tuple<TrackType, TrackKit> combination : TrackRegistry.getCombinations()) {
             CreativePlugin.addToList(list, combination.getSecond().getOutfittedTrack(combination.getFirst()));

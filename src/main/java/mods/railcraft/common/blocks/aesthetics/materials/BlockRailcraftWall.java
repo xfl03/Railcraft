@@ -9,7 +9,9 @@
  -----------------------------------------------------------------------------*/
 package mods.railcraft.common.blocks.aesthetics.materials;
 
+import mods.railcraft.api.core.IRailcraftRegistryEntry;
 import mods.railcraft.api.core.IVariantEnum;
+import mods.railcraft.common.blocks.IRailcraftBlock;
 import mods.railcraft.common.blocks.aesthetics.post.BlockPostBase;
 import mods.railcraft.common.plugins.forestry.ForestryPlugin;
 import mods.railcraft.common.plugins.forge.CreativePlugin;
@@ -47,7 +49,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class BlockRailcraftWall extends BlockWall implements IMaterialBlock {
+public class BlockRailcraftWall extends BlockWall implements IMaterialBlock, IRailcraftBlock.WithVariant {
 
     public static int currentRenderPass;
 
@@ -59,12 +61,6 @@ public class BlockRailcraftWall extends BlockWall implements IMaterialBlock {
     @Override
     public Block getObject() {
         return this;
-    }
-
-    @Nullable
-    @Override
-    public Class<? extends IVariantEnum> getVariantEnum() {
-        return Materials.class;
     }
 
     //TODO: recipe??
@@ -79,12 +75,6 @@ public class BlockRailcraftWall extends BlockWall implements IMaterialBlock {
                     ForestryPlugin.addBackpackItem("forestry.builder", stack);
             }
         }
-    }
-
-    @Nullable
-    @Override
-    public ItemStack getStack(int qty, @Nullable IVariantEnum variant) {
-        return Materials.getStack(this, qty, variant);
     }
 
     @Override

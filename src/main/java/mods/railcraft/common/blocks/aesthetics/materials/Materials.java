@@ -11,12 +11,14 @@ package mods.railcraft.common.blocks.aesthetics.materials;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import mods.railcraft.api.core.IRailcraftRecipeIngredient;
+import mods.railcraft.api.core.IRailcraftRecipeIngredientContainer;
 import mods.railcraft.api.core.IVariantEnum;
+import mods.railcraft.common.blocks.IRailcraftBlock;
+import mods.railcraft.common.blocks.IRailcraftBlockContainer;
+import mods.railcraft.common.blocks.IVariantEnumBlockSpecific;
 import mods.railcraft.common.blocks.aesthetics.brick.BrickTheme;
 import mods.railcraft.common.blocks.aesthetics.brick.BrickVariant;
 import mods.railcraft.common.blocks.aesthetics.generic.EnumGeneric;
-import mods.railcraft.common.core.IRailcraftObject;
 import mods.railcraft.common.core.Railcraft;
 import mods.railcraft.common.util.inventory.InvTools;
 import net.minecraft.block.*;
@@ -310,7 +312,7 @@ public enum Materials implements IVariantEnum {
 
     @Nonnull
     public static ItemStack getStack(Block block, int qty, @Nullable IVariantEnum variant) {
-        ((IRailcraftObject) block).checkVariant(variant);
+        ((IRailcraftBlock.WithVariant) block).checkVariant(variant);
         ItemStack stack = new ItemStack(block, qty);
         if (variant != null)
             tagItemStack(stack, MATERIAL_KEY, (Materials) variant);
@@ -335,6 +337,8 @@ public enum Materials implements IVariantEnum {
             return material;
         return getPlaceholder();
     }
+
+
 
     @Nullable
     public IBlockState getState() {
@@ -465,7 +469,7 @@ public enum Materials implements IVariantEnum {
 
     @Nullable
     @Override
-    public Object getAlternate(IRailcraftRecipeIngredient container) {
+    public Object getAlternate(IRailcraftRecipeIngredientContainer container) {
         return null;
     }
 }

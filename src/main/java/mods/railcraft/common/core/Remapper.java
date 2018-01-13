@@ -33,7 +33,7 @@ import java.util.Optional;
  */
 public enum Remapper {
     RENAMED {
-        private final Map<String, IRailcraftObjectContainer<?>> names = new HashMap<>();
+        private final Map<String, IRailcraftObjectContainer> names = new HashMap<>();
 
         {
             names.put("manipulator", RailcraftBlocks.MANIPULATOR);
@@ -55,12 +55,12 @@ public enum Remapper {
 
         @Override
         protected void attemptRemap(FMLMissingMappingsEvent.MissingMapping mapping) {
-            IRailcraftObjectContainer<?> objectContainer = names.get(MiscTools.cleanTag(mapping.name));
+            IRailcraftObjectContainer objectContainer = names.get(MiscTools.cleanTag(mapping.name));
             if (objectContainer != null)
-                if (mapping.type == GameRegistry.Type.BLOCK && objectContainer instanceof IContainerBlock)
-                    remap(mapping, ((IContainerBlock) objectContainer).block());
-                else if (mapping.type == GameRegistry.Type.ITEM && objectContainer instanceof IContainerItem)
-                    remap(mapping, ((IContainerItem) objectContainer).item());
+                if (mapping.type == GameRegistry.Type.BLOCK && objectContainer instanceof IRailcraftObjectContainer.IContainerBlock)
+                    remap(mapping, ((IRailcraftObjectContainer.IContainerBlock<?>) objectContainer).block());
+                else if (mapping.type == GameRegistry.Type.ITEM && objectContainer instanceof IRailcraftObjectContainer.IContainerItem)
+                    remap(mapping, ((IRailcraftObjectContainer.IContainerItem<?>) objectContainer).item());
         }
     },
     RENAMED_PARTS {

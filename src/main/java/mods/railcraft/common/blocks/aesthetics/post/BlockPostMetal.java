@@ -11,7 +11,6 @@ package mods.railcraft.common.blocks.aesthetics.post;
 
 import mods.railcraft.api.core.IPostConnection;
 import mods.railcraft.api.crafting.RailcraftCraftingManager;
-import mods.railcraft.common.blocks.RailcraftBlocks;
 import mods.railcraft.common.plugins.color.EnumColor;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -50,12 +49,12 @@ public class BlockPostMetal extends BlockPostMetalBase {
     @Override
     public void defineRecipes() {
         // TODO: Temp recipes, remove
-        RailcraftCraftingManager.rollingMachine.addRecipe(RailcraftBlocks.POST_METAL.getStack(16, EnumColor.BLACK),
+        RailcraftCraftingManager.rollingMachine.addRecipe(getStack(16, EnumColor.BLACK),
                 "III",
                 " I ",
                 "III",
                 'I', "ingotIron");
-        RailcraftCraftingManager.rollingMachine.addRecipe(RailcraftBlocks.POST_METAL.getStack(16, EnumColor.BLACK),
+        RailcraftCraftingManager.rollingMachine.addRecipe(getStack(16, EnumColor.BLACK),
                 "I I",
                 "III",
                 "I I",

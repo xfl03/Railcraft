@@ -15,7 +15,6 @@ import mods.railcraft.api.tracks.TrackRegistry;
 import mods.railcraft.api.tracks.TrackType;
 import mods.railcraft.common.blocks.RailcraftBlocks;
 import mods.railcraft.common.blocks.tracks.outfitted.kits.*;
-import mods.railcraft.common.core.IRailcraftObject;
 import mods.railcraft.common.core.IRailcraftObjectContainer;
 import mods.railcraft.common.core.Railcraft;
 import mods.railcraft.common.core.RailcraftConfig;
@@ -29,14 +28,15 @@ import mods.railcraft.common.util.misc.Game;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public enum TrackKits implements IRailcraftObjectContainer<IRailcraftObject<TrackKit>> {
+public enum TrackKits implements IRailcraftObjectContainer.IContainerTrackKit {
 
     ACTIVATOR(2, "activator", 8, TrackKitActivator.class, () -> recipe(Items.REDSTONE, Items.REDSTONE)),
     BOOSTER(2, "booster", 8, TrackKitBooster.class, () -> recipe(RailcraftItems.RAIL, EnumRail.ADVANCED, RailcraftItems.RAIL, EnumRail.ADVANCED, Items.REDSTONE)),
@@ -61,8 +61,7 @@ public enum TrackKits implements IRailcraftObjectContainer<IRailcraftObject<Trac
     JUNCTION(1, "junction", 8, TrackKitJunction.class),
     TURNOUT(8, "turnout", 8, TrackKitSwitchTurnout.class),
     WYE(4, "wye", 8, TrackKitSwitchWye.class),
-    MESSENGER(2, "messenger", 8, TrackKitMessenger.class, () -> recipe(Items.SIGN, Items.REDSTONE)),
-    ;
+    MESSENGER(2, "messenger", 8, TrackKitMessenger.class, () -> recipe(Items.SIGN, Items.REDSTONE)),;
 
     public static final TrackKits[] VALUES = values();
     private static final Set<TrackKit> TRACK_KITS = new HashSet<>(50);
@@ -129,7 +128,7 @@ public enum TrackKits implements IRailcraftObjectContainer<IRailcraftObject<Trac
 
     TrackKits(int states, String tag, int recipeOutput, Class<? extends TrackKitRailcraft> trackInstance, Supplier<List<Object[]>> recipeSupplier) {
         this.states = states;
-        this.def = new Definition(this, tag, null);
+        this.def = new Definition(this, tag);
         this.recipeOutput = recipeOutput;
         this.trackInstance = trackInstance;
         this.recipeSupplier = recipeSupplier;
@@ -159,6 +158,8 @@ public enum TrackKits implements IRailcraftObjectContainer<IRailcraftObject<Trac
         list.add(recipe);
         return list;
     }
+
+
 
     public static Collection<TrackKit> getRailcraftTrackKits() {
         return TRACK_KITS;
@@ -190,6 +191,10 @@ public enum TrackKits implements IRailcraftObjectContainer<IRailcraftObject<Trac
     }
 
     @Override
+    public void initializeClient() {
+    }
+
+    @Override
     public void defineRecipes() {
         if (!RailcraftItems.TRACK_KIT.isLoaded() || !RailcraftModuleManager.isModuleEnabled(ModuleTracks.class))
             return;
@@ -204,6 +209,14 @@ public enum TrackKits implements IRailcraftObjectContainer<IRailcraftObject<Trac
     }
 
     @Override
+    public void finalizeDefinition() {
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void finalizeClient() {
+    }
+
     public boolean isEqual(ItemStack stack) {
         return stack.getItem() instanceof ItemTrackKit && TrackRegistry.TRACK_KIT.get(stack) == getTrackKit();
     }
@@ -211,7 +224,7 @@ public enum TrackKits implements IRailcraftObjectContainer<IRailcraftObject<Trac
     @Override
     public boolean isEnabled() {
         // TODO: Convert to conditionals
-        return RailcraftModuleManager.isModuleEnabled(ModuleTracks.class) && IRailcraftObjectContainer.super.isEnabled() && RailcraftBlocks.TRACK_OUTFITTED.isEnabled() && RailcraftItems.TRACK_KIT.isEnabled() && RailcraftConfig.isSubBlockEnabled(getRegistryName()) && !isDeprecated();
+        return RailcraftModuleManager.isModuleEnabled(ModuleTracks.class) && RailcraftBlocks.TRACK_OUTFITTED.isEnabled() && RailcraftItems.TRACK_KIT.isEnabled() && RailcraftConfig.isSubBlockEnabled(getRegistryName()) && !isDeprecated();
     }
 
     @Override
@@ -229,24 +242,16 @@ public enum TrackKits implements IRailcraftObjectContainer<IRailcraftObject<Trac
     }
 
     @Override
-    @Nullable
-    public ItemStack getStack() {
-        return getStack(1);
-    }
-
-    @Override
-    @Nullable
     public ItemStack getStack(int qty) {
-        if (trackKit != null)
-            return RailcraftItems.TRACK_KIT.getStack(qty, getTrackKit());
-        return null;
+        return RailcraftItems.TRACK_KIT.item().getStack(qty, trackKit());
     }
 
     @Override
-    public Optional<IRailcraftObject<TrackKit>> getObject() {
-        return Optional.empty();
+    public TrackKit trackKit() {
+        return trackKit;
     }
 
+    @Deprecated // Use #trackKit()
     public TrackKit getTrackKit() {
         return trackKit;
     }

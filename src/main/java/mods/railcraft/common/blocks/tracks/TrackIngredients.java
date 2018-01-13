@@ -10,7 +10,7 @@
 
 package mods.railcraft.common.blocks.tracks;
 
-import mods.railcraft.api.core.IRailcraftRecipeIngredient;
+import mods.railcraft.api.core.IRailcraftRecipeIngredientContainer;
 import mods.railcraft.common.core.RailcraftConfig;
 import mods.railcraft.common.items.ItemRail;
 import mods.railcraft.common.items.ItemRailbed;
@@ -26,7 +26,7 @@ import java.util.function.Supplier;
  *
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public enum TrackIngredients implements IRailcraftRecipeIngredient {
+public enum TrackIngredients implements IRailcraftRecipeIngredientContainer {
     RAIL_STRAP_IRON(() -> "slabWood", () -> RailcraftItems.RAIL.getRecipeObject(ItemRail.EnumRail.WOOD)),
     RAIL_STANDARD(() -> "ingotIron", () -> RailcraftItems.RAIL.getRecipeObject(ItemRail.EnumRail.STANDARD)),
     RAIL_ADVANCED(() -> "ingotGold", () -> RailcraftItems.RAIL.getRecipeObject(ItemRail.EnumRail.ADVANCED)),

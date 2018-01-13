@@ -29,8 +29,9 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
 import java.util.List;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Created by CovertJaguar on 4/13/2016 for Railcraft.
@@ -54,10 +55,10 @@ public abstract class BlockRailcraftSubtyped<V extends Enum<V> & IVariantEnum> e
 
     private void setup() {
         if (annotation == null) {
-            annotation = getClass().getAnnotation(RailcraftBlockMetadata.class);
-            //noinspection unchecked
+            annotation = checkNotNull(getClass().getAnnotation(RailcraftBlockMetadata.class));
+            //noinspection unchecked - fail fast!
             this.variantClass = (Class<V>) annotation.variant();
-            this.variantValues = variantClass.getEnumConstants();
+            this.variantValues = checkNotNull(variantClass.getEnumConstants());
             this.variantProperty = PropertyEnum.create("variant", variantClass);
         }
     }
@@ -69,7 +70,7 @@ public abstract class BlockRailcraftSubtyped<V extends Enum<V> & IVariantEnum> e
     }
 
     @Override
-    public final Class<? extends V> getVariantEnum() {
+    public final Class<V> getVariantEnum() {
         return variantClass;
     }
 
@@ -78,26 +79,17 @@ public abstract class BlockRailcraftSubtyped<V extends Enum<V> & IVariantEnum> e
         return variantValues;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public IBlockState getState(@Nullable IVariantEnum variant) {
-        if (variant != null) {
-            checkVariant(variant);
-            return getDefaultState().withProperty(getVariantProperty(), (V) variant);
-        }
-        return getDefaultState();
+    public IBlockState getState(V variant) {
+        return getDefaultState().withProperty(getVariantProperty(), variant);
     }
 
     @Override
     public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list) {
         V[] variants = getVariants();
-        if (variants != null) {
-            for (V variant : variants) {
-                if (!variant.isDeprecated())
-                    CreativePlugin.addToList(list, getStack(variant));
-            }
-        } else {
-            CreativePlugin.addToList(list, getStack(null));
+        for (V variant : variants) {
+            if (!variant.isDeprecated())
+                CreativePlugin.addToList(list, getStack(variant));
         }
     }
 
@@ -138,5 +130,10 @@ public abstract class BlockRailcraftSubtyped<V extends Enum<V> & IVariantEnum> e
     @Override
     public boolean canBeReplacedByLeaves(IBlockState state, IBlockAccess world, BlockPos pos) {
         return false;
+    }
+
+    @Override
+    public ItemStack makeStack(int quantity, int meta) {
+        return new ItemStack(this, quantity, meta);
     }
 }

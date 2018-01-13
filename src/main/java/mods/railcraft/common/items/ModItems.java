@@ -9,7 +9,7 @@
  -----------------------------------------------------------------------------*/
 package mods.railcraft.common.items;
 
-import mods.railcraft.api.core.IRailcraftRecipeIngredient;
+import mods.railcraft.api.core.IRailcraftRecipeIngredientContainer;
 import mods.railcraft.common.modules.RailcraftModuleManager;
 import mods.railcraft.common.plugins.forestry.ForestryPlugin;
 import mods.railcraft.common.plugins.ic2.IC2Plugin;
@@ -27,7 +27,7 @@ import static mods.railcraft.common.util.inventory.InvTools.setSize;
 /**
  * @author CovertJaguar <http://www.railcraft.info/>
  */
-public enum ModItems implements IRailcraftRecipeIngredient {
+public enum ModItems implements IRailcraftRecipeIngredientContainer {
 
     SILK(Mod.FORESTRY, "craftingMaterial", 3),
     STURDY_CASING(Mod.FORESTRY, "sturdyMachine"),

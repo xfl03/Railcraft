@@ -33,7 +33,7 @@ public class InitializationConditional {
     private List<Condition> conditions = new ArrayList<>();
     private Supplier<String> failureReason = () -> "";
 
-    public boolean test(IRailcraftObjectContainer<?> objectContainer) {
+    public boolean test(IRailcraftObjectContainer objectContainer) {
         for (Condition condition : conditions) {
             if (!condition.predicate.test(objectContainer)) {
                 failureReason = condition.failureReason;
@@ -43,15 +43,15 @@ public class InitializationConditional {
         return true;
     }
 
-    public void printFailureReason(IRailcraftObjectContainer<?> objectContainer) {
+    public void printFailureReason(IRailcraftObjectContainer objectContainer) {
         Game.log(Level.INFO, new SimpleMessage(objectContainer + " cannot be defined because " + failureReason.get()));
     }
 
-    public void add(IRailcraftObjectContainer<?> objectContainer) {
+    public void add(IRailcraftObjectContainer objectContainer) {
         add(o -> RailcraftModuleManager.isObjectDefined(objectContainer) && objectContainer.isEnabled(), () -> objectContainer + " is disabled");
     }
 
-    public void add(IRailcraftObjectContainer<?> objectContainer, IVariantEnum variant) {
+    public void add(IRailcraftObjectContainer objectContainer, IVariantEnum variant) {
         add(o -> RailcraftModuleManager.isObjectDefined(objectContainer) && objectContainer.isEnabled() && variant.isEnabled(), () -> objectContainer + "#" + variant + " is disabled");
     }
 
@@ -71,15 +71,15 @@ public class InitializationConditional {
         add(o -> condition.getAsBoolean(), failureReason);
     }
 
-    public void add(Predicate<IRailcraftObjectContainer<?>> condition, Supplier<String> failureReason) {
+    public void add(Predicate<IRailcraftObjectContainer> condition, Supplier<String> failureReason) {
         conditions.add(new Condition(condition, failureReason));
     }
 
     private class Condition {
-        private final Predicate<IRailcraftObjectContainer<?>> predicate;
+        private final Predicate<IRailcraftObjectContainer> predicate;
         private final Supplier<String> failureReason;
 
-        public Condition(Predicate<IRailcraftObjectContainer<?>> predicate, Supplier<String> failureReason) {
+        public Condition(Predicate<IRailcraftObjectContainer> predicate, Supplier<String> failureReason) {
             this.predicate = predicate;
             this.failureReason = failureReason;
         }

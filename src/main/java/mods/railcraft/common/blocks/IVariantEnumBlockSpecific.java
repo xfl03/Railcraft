@@ -12,17 +12,13 @@ package mods.railcraft.common.blocks;
 
 import mods.railcraft.api.core.IRailcraftModule;
 import mods.railcraft.api.core.IVariantEnum;
-import mods.railcraft.common.core.IContainerBlock;
-import mods.railcraft.common.core.IContainerState;
 import mods.railcraft.common.core.RailcraftConfig;
 import mods.railcraft.common.modules.RailcraftModuleManager;
-import mods.railcraft.common.util.inventory.InvTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
@@ -31,11 +27,11 @@ import java.util.function.Consumer;
  * <p>
  * Created by CovertJaguar on 3/24/2016.
  */
-public interface IVariantEnumBlock<M extends Enum<M> & IVariantEnumBlock<M>> extends Comparable<M>, IVariantEnum, IContainerState, IContainerBlock {
+public interface IVariantEnumBlockSpecific<M extends Enum<M> & IVariantEnumBlockSpecific<M>> extends Comparable<M>, IVariantEnum {
     class Definition {
         public final Class<? extends IRailcraftModule>[] modules;
         public final String tag;
-        private Boolean enabled;
+        Boolean enabled;
 
         @SafeVarargs
         public Definition(String tag, Class<? extends IRailcraftModule>... modules) {
@@ -78,12 +74,13 @@ public interface IVariantEnumBlock<M extends Enum<M> & IVariantEnumBlock<M>> ext
     }
 
     default boolean isAvailable() {
-        return block() != null && isEnabled();
+        return isEnabled();
     }
 
-    default void ifAvailable(Consumer<IVariantEnumBlock<M>> action) {
+    @SuppressWarnings("unchecked")
+    default void ifAvailable(Consumer<M> action) {
         if (isAvailable())
-            action.accept(this);
+            action.accept((M) this);
     }
 
     @Override
@@ -96,35 +93,29 @@ public interface IVariantEnumBlock<M extends Enum<M> & IVariantEnumBlock<M>> ext
         return IVariantEnum.super.isDeprecated();
     }
 
-    @Nullable
     default ItemStack getStack() {
         return getStack(1);
     }
 
-    @Nullable
     default ItemStack getStack(int qty) {
         Block block = block();
-        if (block == null)
-            return InvTools.emptyStack();
         return new ItemStack(block, qty, ordinal());
     }
 
-    IRailcraftBlockContainer getContainer();
+    IRailcraftBlockContainer.VariantContainer<?, ?, M> getContainer();
 
-    @Nullable
-    @Override
     default Block block() {
         return getContainer().block();
     }
 
-    @Nullable
-    @Override
+    @SuppressWarnings("unchecked")
     default IBlockState getDefaultState() {
-        return getContainer().getState(this);
+        return getContainer().getState((M) this);
     }
 
+    @SuppressWarnings("unchecked")
     default boolean isState(IBlockState state) {
-        return state.getBlock() instanceof ISubtypedBlock && ((ISubtypedBlock) state.getBlock()).getVariant(state) == this;
+        return state.getBlock() instanceof ISubtypedBlock && ((ISubtypedBlock<M>) state.getBlock()).getVariant(state) == this;
     }
 
     default Tuple<Integer, Integer> getTextureDimensions() {

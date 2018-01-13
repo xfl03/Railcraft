@@ -39,10 +39,11 @@ import java.util.List;
 
 import static mods.railcraft.common.util.inventory.InvTools.dec;
 
+//TODO don't need to be a subclass of ItemMinecart
 public class ItemCart extends ItemMinecart implements IMinecartItem, IRailcraftItemSimple {
 
     private final IRailcraftCartContainer type;
-    private int rarity;
+    private EnumRarity rarity;
 
     public ItemCart(IRailcraftCartContainer cart) {
         super(EntityMinecart.Type.RIDEABLE);
@@ -58,7 +59,7 @@ public class ItemCart extends ItemMinecart implements IMinecartItem, IRailcraftI
         return this;
     }
 
-    public ItemCart setRarity(int rarity) {
+    public ItemCart setRarity(EnumRarity rarity) {
         this.rarity = rarity;
         return this;
     }
@@ -66,7 +67,7 @@ public class ItemCart extends ItemMinecart implements IMinecartItem, IRailcraftI
     @Override
     @SideOnly(Side.CLIENT)
     public EnumRarity getRarity(ItemStack par1ItemStack) {
-        return EnumRarity.values()[rarity];
+        return rarity;
     }
 
     @Override

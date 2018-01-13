@@ -20,7 +20,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ModelLowSidesMinecart extends ModelBase
 {
     public ModelRenderer[] sideModels = new ModelRenderer[7];
-    private static final String __OBFID = "CL_00000844";
 
     public ModelLowSidesMinecart()
     {

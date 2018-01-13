@@ -26,7 +26,12 @@ import java.util.List;
  *
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public interface IRailcraftItem extends IRailcraftObject<Item> {
+public interface IRailcraftItem extends IRailcraftObject<Item>, IRailcraftObject.RecipeIngredient<Item> {
+
+    @Override
+    default ItemStack makeStack(int quantity, int meta) {
+        return new ItemStack(getObject(), quantity, meta);
+    }
 
     default int getHeatValue(ItemStack stack) {
         return 0;
@@ -50,20 +55,31 @@ public interface IRailcraftItem extends IRailcraftObject<Item> {
             info.addAll(toolTip.convertToStrings());
     }
 
-    @Override
-    default Object getRecipeObject(@Nullable IVariantEnum variant) {
-        checkVariant(variant);
-        String oreTag = getOreTag(variant);
-        if (oreTag != null)
-            return oreTag;
-        if (variant != null && ((Item) this).getHasSubtypes())
-            return getStack(variant);
-        return getObject();
-    }
+    interface WithVariant<V extends Enum<V> & IVariantEnum> extends IRailcraftItem, IRailcraftObject.WithVariant<Item, V> {
 
-    @Nullable
-    default String getOreTag(@Nullable IVariantEnum variant) {
-        return null;
-    }
+        @Nullable
+        default V getVariant(ItemStack stack) {
+            int damage = stack.getItemDamage();
+            V[] variants = getVariants();
+            if (damage < 0 || damage >= variants.length) {
+                return null;
+            }
+            return variants[damage];
+        }
 
+        @Override
+        default Object getRecipeObject(V variant) {
+            String oreTag = getOreTag(variant);
+            if (oreTag != null)
+                return oreTag;
+            if (getObject().getHasSubtypes())
+                return getStack(variant);
+            return getStack();
+        }
+
+        @Nullable
+        default String getOreTag(V variant) {
+            return null;
+        }
+    }
 }

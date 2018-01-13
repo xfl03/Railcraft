@@ -11,12 +11,9 @@ package mods.railcraft.common.items;
 
 import mods.railcraft.api.core.IVariantEnum;
 import mods.railcraft.common.blocks.RailcraftBlocks;
-import mods.railcraft.common.blocks.machine.alpha.EnumMachineAlpha;
 import mods.railcraft.common.blocks.tracks.outfitted.ItemTrackKit;
 import mods.railcraft.common.carts.*;
-import mods.railcraft.common.core.IRailcraftObject;
 import mods.railcraft.common.core.IRailcraftObjectContainer;
-import mods.railcraft.common.core.Railcraft;
 import mods.railcraft.common.core.RailcraftConfig;
 import mods.railcraft.common.fluids.Fluids;
 import mods.railcraft.common.fluids.ItemBottle;
@@ -26,6 +23,7 @@ import mods.railcraft.common.items.firestone.ItemFirestoneRefined;
 import mods.railcraft.common.modules.ModuleMagic;
 import mods.railcraft.common.modules.ModuleSignals;
 import mods.railcraft.common.plugins.forestry.ForestryPlugin;
+import mods.railcraft.common.plugins.forestry.ItemBackpackWrapper;
 import mods.railcraft.common.plugins.forge.LocalizationPlugin;
 import mods.railcraft.common.plugins.forge.RailcraftRegistry;
 import mods.railcraft.common.plugins.ic2.ItemLapotronUpgrade;
@@ -38,242 +36,253 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Optional;
 import java.util.function.Supplier;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author CovertJaguar <http://www.railcraft.info/>
  */
-public enum RailcraftItems implements IRailcraftObjectContainer<IRailcraftItemSimple> {
-    ARMOR_BOOTS_STEEL(() -> new ItemSteelArmor(EntityEquipmentSlot.FEET), "armor_boots_steel", () -> Items.IRON_BOOTS),
-    ARMOR_HELMET_STEEL(() -> new ItemSteelArmor(EntityEquipmentSlot.HEAD), "armor_helmet_steel", () -> Items.IRON_HELMET),
-    ARMOR_LEGGINGS_STEEL(() -> new ItemSteelArmor(EntityEquipmentSlot.LEGS), "armor_leggings_steel", () -> Items.IRON_LEGGINGS),
-    ARMOR_CHESTPLATE_STEEL(() -> new ItemSteelArmor(EntityEquipmentSlot.CHEST), "armor_chestplate_steel", () -> Items.IRON_CHESTPLATE),
-    AXE_STEEL(ItemSteelAxe::new, "tool_axe_steel", () -> Items.IRON_AXE),
-    BACKPACK_APOTHECARY_T1(() -> ForestryPlugin.instance().getBackpack("apothecary", "NORMAL"),
+public final class RailcraftItems {
+
+    public static final SimpleItemContainer<ItemSteelArmor> ARMOR_BOOTS_STEEL = new SimpleItemContainer<>(() -> new ItemSteelArmor(EntityEquipmentSlot.FEET), "armor_boots_steel", () -> Items.IRON_BOOTS);
+    public static final SimpleItemContainer<ItemSteelArmor> ARMOR_HELMET_STEEL = new SimpleItemContainer<>(() -> new ItemSteelArmor(EntityEquipmentSlot.HEAD), "armor_helmet_steel", () -> Items.IRON_HELMET);
+    public static final SimpleItemContainer<ItemSteelArmor> ARMOR_LEGGINGS_STEEL = new SimpleItemContainer<>(() -> new ItemSteelArmor(EntityEquipmentSlot.LEGS), "armor_leggings_steel", () -> Items.IRON_LEGGINGS);
+    public static final SimpleItemContainer<ItemSteelArmor> ARMOR_CHESTPLATE_STEEL = new SimpleItemContainer<>(() -> new ItemSteelArmor(EntityEquipmentSlot.CHEST), "armor_chestplate_steel", () -> Items.IRON_CHESTPLATE);
+    public static final SimpleItemContainer<ItemSteelAxe> AXE_STEEL = new SimpleItemContainer<>(ItemSteelAxe::new, "tool_axe_steel", () -> Items.IRON_AXE);
+    public static final SimpleItemContainer<ItemBackpackWrapper> BACKPACK_APOTHECARY_T1 = new SimpleItemContainer<ItemBackpackWrapper>(() -> ForestryPlugin.instance().getBackpack("apothecary", "NORMAL"),
             "backpack_apothecary_t1") {{
         conditions().add(Mod.FORESTRY);
         conditions().add(ModuleMagic.class);
-    }},
-    BACKPACK_APOTHECARY_T2(() -> ForestryPlugin.instance().getBackpack("apothecary", "WOVEN"),
+    }};
+    public static final SimpleItemContainer<ItemBackpackWrapper> BACKPACK_APOTHECARY_T2 = new SimpleItemContainer<ItemBackpackWrapper>(() -> ForestryPlugin.instance().getBackpack("apothecary", "WOVEN"),
             "backpack_apothecary_t2") {{
         conditions().add(Mod.FORESTRY);
         conditions().add(ModuleMagic.class);
-    }},
-    BACKPACK_ICEMAN_T1(() -> ForestryPlugin.instance().getBackpack("iceman", "NORMAL"),
+    }};
+    public static final SimpleItemContainer<ItemBackpackWrapper> BACKPACK_ICEMAN_T1 = new SimpleItemContainer<ItemBackpackWrapper>(() -> ForestryPlugin.instance().getBackpack("iceman", "NORMAL"),
             "backpack_iceman_t1") {{
         conditions().add(Mod.FORESTRY);
-    }},
-    BACKPACK_ICEMAN_T2(() -> ForestryPlugin.instance().getBackpack("iceman", "WOVEN"),
+    }};
+    public static final SimpleItemContainer<ItemBackpackWrapper> BACKPACK_ICEMAN_T2 = new SimpleItemContainer<ItemBackpackWrapper>(() -> ForestryPlugin.instance().getBackpack("iceman", "WOVEN"),
             "backpack_iceman_t2") {{
         conditions().add(Mod.FORESTRY);
-    }},
-    BACKPACK_TRACKMAN_T1(() -> ForestryPlugin.instance().getBackpack("trackman", "NORMAL"),
+    }};
+    public static final SimpleItemContainer<ItemBackpackWrapper> BACKPACK_TRACKMAN_T1 = new SimpleItemContainer<ItemBackpackWrapper>(() -> ForestryPlugin.instance().getBackpack("trackman", "NORMAL"),
             "backpack_trackman_t1") {{
         conditions().add(Mod.FORESTRY);
-    }},
-    BACKPACK_TRACKMAN_T2(() -> ForestryPlugin.instance().getBackpack("trackman", "WOVEN"),
+    }};
+    public static final SimpleItemContainer<ItemBackpackWrapper> BACKPACK_TRACKMAN_T2 = new SimpleItemContainer<ItemBackpackWrapper>(() -> ForestryPlugin.instance().getBackpack("trackman", "WOVEN"),
             "backpack_trackman_t2") {{
         conditions().add(Mod.FORESTRY);
-    }},
-    BACKPACK_SIGNALMAN_T1(() -> ForestryPlugin.instance().getBackpack("signalman", "NORMAL"),
+    }};
+    public static final SimpleItemContainer<ItemBackpackWrapper> BACKPACK_SIGNALMAN_T1 = new SimpleItemContainer<ItemBackpackWrapper>(() -> ForestryPlugin.instance().getBackpack("signalman", "NORMAL"),
             "backpack_signalman_t1") {{
         conditions().add(Mod.FORESTRY);
         conditions().add(ModuleSignals.class);
-    }},
-    BACKPACK_SIGNALMAN_T2(() -> ForestryPlugin.instance().getBackpack("signalman", "WOVEN"),
+    }};
+    public static final SimpleItemContainer<ItemBackpackWrapper> BACKPACK_SIGNALMAN_T2 = new SimpleItemContainer<ItemBackpackWrapper>(() -> ForestryPlugin.instance().getBackpack("signalman", "WOVEN"),
             "backpack_signalman_t2") {{
         conditions().add(Mod.FORESTRY);
         conditions().add(ModuleSignals.class);
-    }},
-    BLEACHED_CLAY(ItemRailcraft::new, "bleached_clay", () -> Items.CLAY_BALL) {{
+    }};
+    public static final SimpleItemContainer<ItemRailcraft> BLEACHED_CLAY = new SimpleItemContainer<ItemRailcraft>(ItemRailcraft::new, "bleached_clay", () -> Items.CLAY_BALL) {{
         conditions().add(RailcraftBlocks.BRICK_BLEACHED_BONE);
-    }},
-    BORE_HEAD_BRONZE(ItemBoreHeadBronze::new, "borehead_bronze") {{
+    }};
+    public static final SimpleItemContainer<ItemBoreHeadBronze> BORE_HEAD_BRONZE = new SimpleItemContainer<ItemBoreHeadBronze>(ItemBoreHeadBronze::new, "borehead_bronze") {{
         conditions().add(RailcraftCarts.BORE);
-    }},
-    BORE_HEAD_IRON(ItemBoreHeadIron::new, "borehead_iron") {{
+    }};
+    public static final SimpleItemContainer<ItemBoreHeadIron> BORE_HEAD_IRON = new SimpleItemContainer<ItemBoreHeadIron>(ItemBoreHeadIron::new, "borehead_iron") {{
         conditions().add(RailcraftCarts.BORE);
-    }},
-    BORE_HEAD_STEEL(ItemBoreHeadSteel::new, "borehead_steel") {{
+    }};
+    public static final SimpleItemContainer<ItemBoreHeadSteel> BORE_HEAD_STEEL = new SimpleItemContainer<ItemBoreHeadSteel>(ItemBoreHeadSteel::new, "borehead_steel") {{
         conditions().add(RailcraftCarts.BORE);
-    }},
-    BORE_HEAD_DIAMOND(ItemBoreHeadDiamond::new, "borehead_diamond") {{
+    }};
+    public static final SimpleItemContainer<ItemBoreHeadDiamond> BORE_HEAD_DIAMOND = new SimpleItemContainer<ItemBoreHeadDiamond>(ItemBoreHeadDiamond::new, "borehead_diamond") {{
         conditions().add(RailcraftCarts.BORE);
-    }},
-    CHARGE(ItemCharge::new, "charge"),
-    CHARGE_METER(ItemChargeMeter::new, "tool_charge_meter"),
-    CIRCUIT(ItemCircuit::new, "circuit"),
-    COKE(ItemCoke::new, "fuel_coke"),
-    CONCRETE(ItemConcrete::new, "concrete"),
-    BOTTLE_CREOSOTE(() -> new ItemBottle(Fluids.CREOSOTE), "fluid_bottle_creosote"),
-    BOTTLE_STEAM(() -> new ItemBottle(Fluids.STEAM), "fluid_bottle_steam"),
-    CROWBAR_IRON(ItemCrowbarIron::new, "tool_crowbar_iron"),
-    CROWBAR_STEEL(ItemCrowbarSteel::new, "tool_crowbar_steel"),
-    CROWBAR_THAUMIUM(ItemCrowbarThaumium::new, "tool_crowbar_thaumium") {{
+    }};
+    public static final VariedItemContainer<ItemCharge, ItemCharge.EnumCharge> CHARGE = new VariedItemContainer<>(ItemCharge::new, "charge", ItemCharge.EnumCharge.class);
+    public static final SimpleItemContainer<ItemChargeMeter> CHARGE_METER = new SimpleItemContainer<>(ItemChargeMeter::new, "tool_charge_meter");
+    public static final VariedItemContainer<ItemCircuit, ItemCircuit.EnumCircuit> CIRCUIT = new VariedItemContainer<>(ItemCircuit::new, "circuit", ItemCircuit.EnumCircuit.class);
+    public static final SimpleItemContainer<ItemCoke> COKE = new SimpleItemContainer<>(ItemCoke::new, "fuel_coke");
+    public static final SimpleItemContainer<ItemConcrete> CONCRETE = new SimpleItemContainer<>(ItemConcrete::new, "concrete");
+    public static final SimpleItemContainer<ItemBottle> BOTTLE_CREOSOTE = new SimpleItemContainer<>(() -> new ItemBottle(Fluids.CREOSOTE), "fluid_bottle_creosote");
+    public static final SimpleItemContainer<ItemBottle> BOTTLE_STEAM = new SimpleItemContainer<>(() -> new ItemBottle(Fluids.STEAM), "fluid_bottle_steam");
+    public static final SimpleItemContainer<ItemCrowbarIron> CROWBAR_IRON = new SimpleItemContainer<>(ItemCrowbarIron::new, "tool_crowbar_iron");
+    public static final SimpleItemContainer<ItemCrowbarSteel> CROWBAR_STEEL = new SimpleItemContainer<>(ItemCrowbarSteel::new, "tool_crowbar_steel");
+    public static final SimpleItemContainer<ItemCrowbarThaumium> CROWBAR_THAUMIUM = new SimpleItemContainer<ItemCrowbarThaumium>(ItemCrowbarThaumium::new, "tool_crowbar_thaumium") {{
         conditions().add(Mod.THAUMCRAFT);
-    }},
-    CROWBAR_VOID(ItemCrowbarVoid::new, "tool_crowbar_void") {{
+    }};
+    public static final SimpleItemContainer<ItemCrowbarVoid> CROWBAR_VOID = new SimpleItemContainer<ItemCrowbarVoid>(ItemCrowbarVoid::new, "tool_crowbar_void") {{
         conditions().add(Mod.THAUMCRAFT);
-    }},
-    CROWBAR_DIAMOND(ItemCrowbarDiamond::new, "tool_crowbar_diamond"),
-    DUST(ItemDust::new, "dust"),
-    GEAR(ItemGear::new, "gear"),
-    GOGGLES(ItemGoggles::new, "armor_goggles"),
-    FILTER_BEE(ItemFilterBee::new, "filter_bee") {{
+    }};
+    public static final SimpleItemContainer<ItemCrowbarDiamond> CROWBAR_DIAMOND = new SimpleItemContainer<>(ItemCrowbarDiamond::new, "tool_crowbar_diamond");
+    public static final VariedItemContainer<ItemDust, ItemDust.EnumDust> DUST = new VariedItemContainer<>(ItemDust::new, "dust", ItemDust.EnumDust.class);
+    public static final VariedItemContainer<ItemGear, ItemGear.EnumGear> GEAR = new VariedItemContainer<>(ItemGear::new, "gear", ItemGear.EnumGear.class);
+    public static final SimpleItemContainer<ItemGoggles> GOGGLES = new SimpleItemContainer<>(ItemGoggles::new, "armor_goggles");
+    public static final SimpleItemContainer<ItemFilterBee> FILTER_BEE = new SimpleItemContainer<ItemFilterBee>(ItemFilterBee::new, "filter_bee") {{
         conditions().add(Mod.FORESTRY);
-    }},
-    FILTER_BEE_GENOME(ItemFilterBeeGenome::new, "filter_bee_genome") {{
+    }};
+    public static final SimpleItemContainer<ItemFilterBeeGenome> FILTER_BEE_GENOME = new SimpleItemContainer<ItemFilterBeeGenome>(ItemFilterBeeGenome::new, "filter_bee_genome") {{
         conditions().add(Mod.FORESTRY);
-    }},
-    FILTER_BLANK(ItemFilterBlank::new, "filter_blank"),
-    FILTER_TYPE(ItemFilterType::new, "filter_type"),
-    FILTER_ORE_DICT(ItemFilterOreDictionary::new, "filter_ore_dict"),
-    FIRESTONE_CRACKED(ItemFirestoneCracked::new, "firestone_cracked"),
-    FIRESTONE_CUT(ItemFirestone::new, "firestone_cut"),
-    FIRESTONE_RAW(ItemFirestone::new, "firestone_raw"),
-    FIRESTONE_REFINED(ItemFirestoneRefined::new, "firestone_refined"),
-    HOE_STEEL(ItemSteelHoe::new, "tool_hoe_steel", () -> Items.IRON_HOE),
-    INGOT(ItemIngot::new, "ingot"),
-    LAPOTRON_UPGRADE(ItemLapotronUpgrade::new, "ic2_upgrade_lapotron") {{
+    }};
+    public static final SimpleItemContainer<ItemFilterBlank> FILTER_BLANK = new SimpleItemContainer<>(ItemFilterBlank::new, "filter_blank");
+    public static final SimpleItemContainer<ItemFilterType> FILTER_TYPE = new SimpleItemContainer<>(ItemFilterType::new, "filter_type");
+    public static final SimpleItemContainer<ItemFilterOreDictionary> FILTER_ORE_DICT = new SimpleItemContainer<>(ItemFilterOreDictionary::new, "filter_ore_dict");
+    public static final SimpleItemContainer<ItemFirestoneCracked> FIRESTONE_CRACKED = new SimpleItemContainer<>(ItemFirestoneCracked::new, "firestone_cracked");
+    public static final SimpleItemContainer<ItemFirestone> FIRESTONE_CUT = new SimpleItemContainer<>(ItemFirestone::new, "firestone_cut");
+    public static final SimpleItemContainer<ItemFirestone> FIRESTONE_RAW = new SimpleItemContainer<>(ItemFirestone::new, "firestone_raw");
+    public static final SimpleItemContainer<ItemFirestoneRefined> FIRESTONE_REFINED = new SimpleItemContainer<>(ItemFirestoneRefined::new, "firestone_refined");
+    public static final SimpleItemContainer<ItemSteelHoe> HOE_STEEL = new SimpleItemContainer<>(ItemSteelHoe::new, "tool_hoe_steel", () -> Items.IRON_HOE);
+    public static final VariedItemContainer<ItemIngot, Metal> INGOT = new VariedItemContainer<>(ItemIngot::new, "ingot", Metal.class);
+    public static final SimpleItemContainer<ItemLapotronUpgrade> LAPOTRON_UPGRADE = new SimpleItemContainer<ItemLapotronUpgrade>(ItemLapotronUpgrade::new, "ic2_upgrade_lapotron") {{
         conditions().add(() -> Mod.anyLoaded(Mod.IC2, Mod.IC2_CLASSIC), () -> "Mod Ic2 or Ic2Classic is not installed");
-    }},
-    MAG_GLASS(ItemMagnifyingGlass::new, "tool_magnifying_glass"),
-    NOTEPAD(ItemNotepad::new, "tool_notepad"),
-    NUGGET(ItemNugget::new, "nugget"),
-    OVERALLS(ItemOveralls::new, "armor_overalls"),
-    PICKAXE_STEEL(ItemSteelPickaxe::new, "tool_pickaxe_steel", () -> Items.IRON_PICKAXE),
-    PLATE(ItemPlate::new, "plate"),
-    RAIL(ItemRail::new, "rail"),
-    RAILBED(ItemRailbed::new, "railbed"),
-    REBAR(ItemRebar::new, "rebar", () -> "ingotIron"),
-    ROUTING_TABLE(ItemRoutingTable::new, "routing_table", () -> Items.WRITABLE_BOOK),
-    SHEARS_STEEL(ItemSteelShears::new, "tool_shears_steel", () -> Items.SHEARS),
-    SHOVEL_STEEL(ItemSteelShovel::new, "tool_shovel_steel", () -> Items.IRON_SHOVEL),
-    SIGNAL_BLOCK_SURVEYOR(ItemSignalBlockSurveyor::new, "tool_signal_surveyor"),
-    SIGNAL_LABEL(ItemSignalLabel::new, "tool_signal_label"),
-    SIGNAL_LAMP(ItemSignalLamp::new, "signal_lamp", () -> Blocks.REDSTONE_LAMP),
-    SIGNAL_TUNER(ItemSignalTuner::new, "tool_signal_tuner"),
-    SPIKE_MAUL_IRON(ItemSpikeMaulIron::new, "tool_spike_maul_iron"),
-    SPIKE_MAUL_STEEL(ItemSpikeMaulSteel::new, "tool_spike_maul_steel"),
-    STONE_CARVER(ItemStoneCarver::new, "tool_stone_carver"),
-    SWORD_STEEL(ItemSteelSword::new, "tool_sword_steel", () -> Items.IRON_SWORD),
-    TICKET(ItemTicket::new, "routing_ticket", () -> Items.PAPER),
-    TICKET_GOLD(ItemTicketGold::new, "routing_ticket_gold", () -> Items.GOLD_NUGGET),
-    TIE(ItemTie::new, "tie"),
-    TRACK_KIT(ItemTrackKit::new, "track_kit") {{
+    }};
+    public static final SimpleItemContainer<ItemMagnifyingGlass> MAG_GLASS = new SimpleItemContainer<>(ItemMagnifyingGlass::new, "tool_magnifying_glass");
+    public static final SimpleItemContainer<ItemNotepad> NOTEPAD = new SimpleItemContainer<>(ItemNotepad::new, "tool_notepad");
+    public static final VariedItemContainer<ItemNugget, Metal> NUGGET = new VariedItemContainer<>(ItemNugget::new, "nugget", Metal.class);
+    public static final SimpleItemContainer<ItemOveralls> OVERALLS = new SimpleItemContainer<>(ItemOveralls::new, "armor_overalls");
+    public static final SimpleItemContainer<ItemSteelPickaxe> PICKAXE_STEEL = new SimpleItemContainer<>(ItemSteelPickaxe::new, "tool_pickaxe_steel", () -> Items.IRON_PICKAXE);
+    public static final VariedItemContainer<ItemPlate, Metal> PLATE = new VariedItemContainer<>(ItemPlate::new, "plate", Metal.class);
+    public static final SimpleItemContainer<ItemRail> RAIL = new SimpleItemContainer<>(ItemRail::new, "rail");
+    public static final SimpleItemContainer<ItemRailbed> RAILBED = new SimpleItemContainer<>(ItemRailbed::new, "railbed");
+    public static final SimpleItemContainer<ItemRebar> REBAR = new SimpleItemContainer<>(ItemRebar::new, "rebar", () -> "ingotIron");
+    public static final SimpleItemContainer<ItemRoutingTable> ROUTING_TABLE = new SimpleItemContainer<>(ItemRoutingTable::new, "routing_table", () -> Items.WRITABLE_BOOK);
+    public static final SimpleItemContainer<ItemSteelShears> SHEARS_STEEL = new SimpleItemContainer<>(ItemSteelShears::new, "tool_shears_steel", () -> Items.SHEARS);
+    public static final SimpleItemContainer<ItemSteelShovel> SHOVEL_STEEL = new SimpleItemContainer<>(ItemSteelShovel::new, "tool_shovel_steel", () -> Items.IRON_SHOVEL);
+    public static final SimpleItemContainer<ItemSignalBlockSurveyor> SIGNAL_BLOCK_SURVEYOR = new SimpleItemContainer<>(ItemSignalBlockSurveyor::new, "tool_signal_surveyor");
+    public static final SimpleItemContainer<ItemSignalLabel> SIGNAL_LABEL = new SimpleItemContainer<>(ItemSignalLabel::new, "tool_signal_label");
+    public static final SimpleItemContainer<ItemSignalLamp> SIGNAL_LAMP = new SimpleItemContainer<>(ItemSignalLamp::new, "signal_lamp", () -> Blocks.REDSTONE_LAMP);
+    public static final SimpleItemContainer<ItemSignalTuner> SIGNAL_TUNER = new SimpleItemContainer<>(ItemSignalTuner::new, "tool_signal_tuner");
+    public static final SimpleItemContainer<ItemSpikeMaulIron> SPIKE_MAUL_IRON = new SimpleItemContainer<>(ItemSpikeMaulIron::new, "tool_spike_maul_iron");
+    public static final SimpleItemContainer<ItemSpikeMaulSteel> SPIKE_MAUL_STEEL = new SimpleItemContainer<>(ItemSpikeMaulSteel::new, "tool_spike_maul_steel");
+    public static final SimpleItemContainer<ItemStoneCarver> STONE_CARVER = new SimpleItemContainer<>(ItemStoneCarver::new, "tool_stone_carver");
+    public static final SimpleItemContainer<ItemSteelSword> SWORD_STEEL = new SimpleItemContainer<>(ItemSteelSword::new, "tool_sword_steel", () -> Items.IRON_SWORD);
+    public static final SimpleItemContainer<ItemTicket> TICKET = new SimpleItemContainer<>(ItemTicket::new, "routing_ticket", () -> Items.PAPER);
+    public static final SimpleItemContainer<ItemTicketGold> TICKET_GOLD = new SimpleItemContainer<>(ItemTicketGold::new, "routing_ticket_gold", () -> Items.GOLD_NUGGET);
+    public static final SimpleItemContainer<ItemTie> TIE = new SimpleItemContainer<>(ItemTie::new, "tie");
+    public static final SimpleItemContainer<ItemTrackKit> TRACK_KIT = new SimpleItemContainer<ItemTrackKit>(ItemTrackKit::new, "track_kit") {{
         conditions().add(RailcraftBlocks.TRACK_OUTFITTED);
-    }},
-    TRACK_PARTS(ItemTrackParts::new, "track_parts", () -> "ingotIron"),
-    TURBINE_BLADE(ItemTurbineBlade::new, "turbine_blade", () -> "ingotSteel") {{
-//        conditions().add(EnumMachineAlpha.TURBINE);
-    }},
-    TURBINE_DISK(ItemTurbineDisk::new, "turbine_disk", () -> "blockSteel") {{
-//        conditions().add(EnumMachineAlpha.TURBINE);
-    }},
-    TURBINE_ROTOR(ItemTurbineRotor::new, "turbine_rotor") {{
-//        conditions().add(EnumMachineAlpha.TURBINE);
-    }},
-    WHISTLE_TUNER(ItemWhistleTuner::new, "tool_whistle_tuner");
-    public static final RailcraftItems[] VALUES = values();
-    private final Supplier<Item> itemSupplier;
-    private final Definition def;
-    private Item item;
-    private Optional<IRailcraftItemSimple> railcraftObject = Optional.empty();
+    }};
+    public static final SimpleItemContainer<ItemTrackParts> TRACK_PARTS = new SimpleItemContainer<>(ItemTrackParts::new, "track_parts", () -> "ingotIron");
+    public static final SimpleItemContainer<ItemTurbineBlade> TURBINE_BLADE = new SimpleItemContainer<>(ItemTurbineBlade::new, "turbine_blade", () -> "ingotSteel");
+    public static final SimpleItemContainer<ItemTurbineDisk> TURBINE_DISK = new SimpleItemContainer<>(ItemTurbineDisk::new, "turbine_disk", () -> "blockSteel");
+    public static final SimpleItemContainer<ItemTurbineRotor> TURBINE_ROTOR = new SimpleItemContainer<>(ItemTurbineRotor::new, "turbine_rotor");
+    public static final SimpleItemContainer<ItemWhistleTuner> WHISTLE_TUNER = new SimpleItemContainer<>(ItemWhistleTuner::new, "tool_whistle_tuner");
 
-    RailcraftItems(Supplier<Item> itemSupplier, String tag) {
-        this(itemSupplier, tag, null);
-    }
+    @Deprecated
+    public static final RailcraftItems[] VALUES = null;
 
-    RailcraftItems(Supplier<Item> itemSupplier, String tag, @Nullable Supplier<Object> alt) {
-        this.def = new Definition(this, tag, alt);
-        this.itemSupplier = itemSupplier;
-        conditions().add(RailcraftConfig::isItemEnabled, () -> "disabled via config");
-    }
+    public static class SimpleItemContainer<T extends Item & IRailcraftItemSimple> implements IRailcraftObjectContainer.IContainerItem<T> {
 
-    @Override
-    public Definition getDef() {
-        return def;
-    }
+        private final Supplier<T> itemSupplier;
+        private final Definition def;
+        private T item;
+        private Supplier<Object> alt;
 
-    @Override
-    public void register() {
-        if (item != null)
-            return;
+        SimpleItemContainer(Supplier<T> itemSupplier, String tag) {
+            this(itemSupplier, tag, null);
+        }
 
-        if (isEnabled()) {
-            Item newItem = itemSupplier.get();
-            if (newItem == null)
-                return;
-            if (newItem instanceof IRailcraftItemSimple)
-                item = ((IRailcraftItemSimple) newItem).getObject();
-            else
-                item = newItem;
+        SimpleItemContainer(Supplier<T> itemSupplier, String tag, @Nullable Supplier<Object> alt) {
+            this.def = new Definition(this, tag);
+            this.alt = alt;
+            this.itemSupplier = itemSupplier;
+            conditions().add(RailcraftConfig::isItemEnabled, () -> "disabled via config");
+        }
+
+        @Override
+        public Definition getDef() {
+            return def;
+        }
+
+        @Override
+        public void register() {
+            item = itemSupplier.get();
             item.setRegistryName(getBaseTag());
             item.setUnlocalizedName(LocalizationPlugin.convertTag(getFullTag()));
-            RailcraftRegistry.register(item);
-            IRailcraftItemSimple railcraftItem;
-            if (newItem instanceof IRailcraftItemSimple)
-                railcraftItem = (IRailcraftItemSimple) newItem;
-            else
-                railcraftItem = new ItemWrapper(newItem);
-            railcraftObject = Optional.of(railcraftItem);
-            railcraftItem.initializeDefinition();
-        } else {
-            conditions().printFailureReason(this);
+            RailcraftRegistry.register((Item) item);
+            item.initializeDefinition();
+        }
+
+        @SideOnly(Side.CLIENT)
+        @Override
+        public void initializeClient() {
+            item.initializeClient();
+        }
+
+        @Override
+        public void defineRecipes() {
+            item.defineRecipes();
+        }
+
+        @Override
+        public void finalizeDefinition() {
+            item.finalizeDefinition();
+        }
+
+        public boolean isEqual(@Nullable ItemStack stack) {
+            return !InvTools.isEmpty(stack) && item == stack.getItem();
+        }
+
+        public boolean isInstance(@Nullable ItemStack stack) {
+            return !InvTools.isEmpty(stack) && (item == stack.getItem() || item.getClass().isInstance(stack.getItem()));
+        }
+
+        public boolean isEqual(@Nullable Item item) {
+            return item != null && this.item == item;
+        }
+
+        public T item() {
+            if (isLoaded())
+                return checkNotNull(item);
+            throw new RuntimeException("Trying to access disabled item");
+        }
+
+        public String getFullTag() {
+            return "railcraft." + getBaseTag();
+        }
+
+        @Nullable
+        public ItemStack getStack(int qty, int meta) {
+            if (item == null)
+                return InvTools.emptyStack();
+            return new ItemStack(item, qty, meta);
+        }
+
+        @Override
+        public String toString() {
+            return "Item{" + getBaseTag() + "}";
         }
     }
 
-    @Override
-    public boolean isEqual(@Nullable ItemStack stack) {
-        return !InvTools.isEmpty(stack) && item == stack.getItem();
+    public static class VariedItemContainer<T extends Item & IRailcraftItemSimple.WithVariant<V>, V extends Enum<V> & IVariantEnum> extends SimpleItemContainer<T>
+            implements IRailcraftObjectContainer.IContainerItemVariant<T, V> {
+
+        private Class<V> variantClass;
+
+        VariedItemContainer(Supplier<T> itemSupplier, String tag, Class<V> variantClass) {
+            this(itemSupplier, tag, variantClass, null);
+        }
+
+        VariedItemContainer(Supplier<T> itemSupplier, String tag, Class<V> variantClass, @Nullable Supplier<Object> alt) {
+            super(itemSupplier, tag, alt);
+            this.variantClass = variantClass;
+        }
+
+        @Override
+        public Class<? extends V> getVariantEnum() {
+            return variantClass;
+        }
+
+        @Override
+        public ItemStack getStack(int qty, V variant) {
+            return item().getStack(qty, variant);
+        }
     }
 
-    public boolean isInstance(@Nullable ItemStack stack) {
-        return !InvTools.isEmpty(stack) && (item == stack.getItem() || item.getClass().isInstance(stack.getItem()));
-    }
-
-    public boolean isEqual(@Nullable Item item) {
-        return item != null && this.item == item;
-    }
-
-    @Nullable
-    public Item item() {
-        return getObject().map(IRailcraftObject::getObject).orElse(null);
-    }
-
-    public String getFullTag() {
-        return "railcraft." + getBaseTag();
-    }
-
-    @Nullable
-    public ItemStack getStack(int qty, int meta) {
-        if (item == null)
-            return InvTools.emptyStack();
-        return new ItemStack(item, qty, meta);
-    }
-
-    private void checkVariantObject(@Nullable IVariantEnum variant) {
-        getObject().ifPresent(o -> o.checkVariant(variant));
-    }
-
-    @Nullable
-    @Override
-    public ItemStack getStack(int qty, @Nullable IVariantEnum variant) {
-        checkVariantObject(variant);
-        return getObject().map(i -> i.getStack(qty, variant)).orElse(null);
-    }
-
-    @Override
-    public Optional<IRailcraftItemSimple> getObject() {
-        return railcraftObject;
-    }
-
-    @Override
-    public String toString() {
-        return "Item{" + getBaseTag() + "}";
-    }
 }

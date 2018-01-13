@@ -9,7 +9,6 @@
  -----------------------------------------------------------------------------*/
 package mods.railcraft.common.blocks.aesthetics.brick;
 
-import mods.railcraft.api.core.IVariantEnum;
 import mods.railcraft.api.crafting.ICrusherCraftingManager;
 import mods.railcraft.api.crafting.RailcraftCraftingManager;
 import mods.railcraft.common.blocks.BlockRailcraftSubtyped;
@@ -29,7 +28,6 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 import static mods.railcraft.common.blocks.aesthetics.brick.BrickVariant.*;
@@ -52,10 +50,10 @@ public class BlockBrick extends BlockRailcraftSubtyped<BrickVariant> {
     @Override
     public void initializeDefinition() {
         ForestryPlugin.addBackpackItem("forestry.builder", this);
-        theme.initBlock(this);
 
         for (BrickVariant variant : BrickVariant.VALUES) {
-            theme.initVariant(this, variant);
+            if (variant.isEnabled())
+                theme.initVariant(this, variant);
         }
     }
 
@@ -79,21 +77,17 @@ public class BlockBrick extends BlockRailcraftSubtyped<BrickVariant> {
     }
 
     @Override
-    public IBlockState getState(@Nullable IVariantEnum variant) {
+    public IBlockState getState(BrickVariant variant) {
         IBlockState state = getDefaultState();
-        if (variant instanceof BrickVariant) {
-            checkVariant(variant);
-            IBlockState newState = theme.getState((BrickVariant) variant);
-            if (newState != null)
-                state = newState;
+        if (variant.isEnabled()) {
+            state = theme.getState(variant);
         }
         return state;
     }
 
     @Override
-    public ItemStack getStack(int qty, @Nullable IVariantEnum variant) {
-        if (variant != null) {
-            checkVariant(variant);
+    public ItemStack getStack(int qty, BrickVariant variant) {
+        if (variant.isEnabled()) {
             return theme.getStack(qty, variant);
         }
         return new ItemStack(this, qty);

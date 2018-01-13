@@ -19,8 +19,13 @@ import net.minecraft.block.state.IBlockState;
  *
  * @author CovertJaguar <http://www.railcraft.info>
  */
-public interface ISubtypedBlock<V extends Enum<V> & IVariantEnum> {
+public interface ISubtypedBlock<V extends Enum<V> & IVariantEnum> extends IRailcraftBlock.WithVariant<V> {
     IProperty<V> getVariantProperty();
+
+    @Override
+    default IBlockState getState(V variant) {
+        return getObject().getDefaultState().withProperty(getVariantProperty(), variant);
+    }
 
     default V getVariant(IBlockState state) {
         return state.getValue(getVariantProperty());

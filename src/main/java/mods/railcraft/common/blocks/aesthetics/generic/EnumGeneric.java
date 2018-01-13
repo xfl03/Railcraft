@@ -11,7 +11,7 @@ package mods.railcraft.common.blocks.aesthetics.generic;
 
 import mods.railcraft.api.core.IRailcraftModule;
 import mods.railcraft.common.blocks.IRailcraftBlockContainer;
-import mods.railcraft.common.blocks.IVariantEnumBlock;
+import mods.railcraft.common.blocks.IVariantEnumBlockSpecific;
 import mods.railcraft.common.blocks.RailcraftBlocks;
 import mods.railcraft.common.modules.ModuleResources;
 import mods.railcraft.common.modules.ModuleStructures;
@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * @author CovertJaguar
  */
-public enum EnumGeneric implements IVariantEnumBlock<EnumGeneric> {
+public enum EnumGeneric implements IVariantEnumBlockSpecific<EnumGeneric> {
 
     BLOCK_COPPER(ModuleResources.class, "copper", new SimpleCube(), 3f, 10f),
     BLOCK_TIN(ModuleResources.class, "tin", new SimpleCube(), 3f, 10f),
@@ -43,7 +43,7 @@ public enum EnumGeneric implements IVariantEnumBlock<EnumGeneric> {
     BLOCK_ZINC(ModuleResources.class, "zinc", new SimpleCube(), 3f, 10f),
     BLOCK_BRASS(ModuleResources.class, "brass", new SimpleCube(), 3f, 10f),;
     public static final EnumGeneric[] VALUES = values();
-    private static final List<EnumGeneric> creativeList = new ArrayList<EnumGeneric>();
+    private static final List<EnumGeneric> creativeList = new ArrayList<>();
 
     static {
         creativeList.add(BLOCK_COPPER);
@@ -101,7 +101,7 @@ public enum EnumGeneric implements IVariantEnumBlock<EnumGeneric> {
     }
 
     @Override
-    public IRailcraftBlockContainer getContainer() {
+    public IRailcraftBlockContainer.VariantContainer<?, ?, EnumGeneric> getContainer() {
         return RailcraftBlocks.GENERIC;
     }
 

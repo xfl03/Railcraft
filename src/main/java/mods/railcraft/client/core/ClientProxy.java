@@ -24,13 +24,13 @@ import mods.railcraft.common.blocks.IRailcraftBlock;
 import mods.railcraft.common.blocks.RailcraftBlocks;
 import mods.railcraft.common.blocks.aesthetics.post.TilePostEmblem;
 import mods.railcraft.common.blocks.machine.IEnumMachine;
-import mods.railcraft.common.blocks.machine.beta.EnumMachineBeta;
-import mods.railcraft.common.blocks.multi.TileTankBase;
 import mods.railcraft.common.blocks.machine.manipulator.TileFluidManipulator;
 import mods.railcraft.common.blocks.machine.wayobjects.boxes.TileBoxBase;
 import mods.railcraft.common.blocks.machine.wayobjects.signals.*;
+import mods.railcraft.common.blocks.multi.TileTankBase;
 import mods.railcraft.common.carts.EntityTunnelBore;
 import mods.railcraft.common.core.CommonProxy;
+import mods.railcraft.common.core.IRailcraftObject;
 import mods.railcraft.common.core.RailcraftConfig;
 import mods.railcraft.common.core.RailcraftObjects;
 import mods.railcraft.common.items.IRailcraftItemSimple;
@@ -106,6 +106,7 @@ public class ClientProxy extends CommonProxy {
                 ParticleSpark.sprite = event.getMap().registerSprite(new ResourceLocation("railcraft:particle/spark"));
                 ParticlePumpkin.sprite = event.getMap().registerSprite(new ResourceLocation("railcraft:particle/pumpkin"));
 
+                //TODO load from modules, etc
                 for (RailcraftBlocks blockContainer : RailcraftBlocks.VALUES) {
                     Block block = blockContainer.block();
                     if (block instanceof IRailcraftBlock) {
@@ -147,16 +148,11 @@ public class ClientProxy extends CommonProxy {
 //            });
 //        }
 
-        RailcraftObjects.processBlocks(
-                (block, item) -> {
-                    block.initializeClient();
-                    if (item != null)
-                        item.initializeClient();
-                },
+        RailcraftObjects.processBlocks(IRailcraftObject::initializeClient,
+                IRailcraftObject::initializeClient,
                 (block, variant) -> {
                     ItemStack stack = block.getStack(variant);
-                    if (stack != null)
-                        block.registerItemModel(stack, variant);
+                    block.registerItemModel(stack, variant);
                 });
 
         RailcraftPotions.VALUES.forEach(RailcraftPotions::initializeClient);
@@ -205,12 +201,12 @@ public class ClientProxy extends CommonProxy {
         bindTESR(TileTankBase.class, TESRHollowTank::new);
         bindTESR(TileFluidManipulator.class, TESRManipulatorFluid::new);
 
-        bindTESR(EnumMachineBeta.ENGINE_STEAM_HOBBY, TESRPneumaticEngine::new);
-        bindTESR(EnumMachineBeta.ENGINE_STEAM_LOW, TESRPneumaticEngine::new);
-        bindTESR(EnumMachineBeta.ENGINE_STEAM_HIGH, TESRPneumaticEngine::new);
-
-        bindTESR(EnumMachineBeta.VOID_CHEST, TESRChest::new);
-        bindTESR(EnumMachineBeta.METALS_CHEST, TESRChest::new);
+//        bindTESR(EnumMachineBeta.ENGINE_STEAM_HOBBY, TESRPneumaticEngine::new);
+//        bindTESR(EnumMachineBeta.ENGINE_STEAM_LOW, TESRPneumaticEngine::new);
+//        bindTESR(EnumMachineBeta.ENGINE_STEAM_HIGH, TESRPneumaticEngine::new);
+//
+//        bindTESR(EnumMachineBeta.VOID_CHEST, TESRChest::new);
+//        bindTESR(EnumMachineBeta.METALS_CHEST, TESRChest::new);
 
 //        bindTESR(EnumMachineDelta.CAGE, TESRCagedEntity::new);
 
